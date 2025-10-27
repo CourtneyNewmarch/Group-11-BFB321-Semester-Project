@@ -109,7 +109,7 @@ erDiagram
 This Database includes the following tables:    
 ## Tables
 1. __Suppliers__: Certified medication suppliers/vendors
-2. **Customers**: Registered customers and their relevant information
+2. **Customers**: Registered customers/medical personell and their relevant information
 3. **Medications**: Contains a variety of medications and their related informartion (category and price)
 4. **Batches**: Provides a batch view for ease in medications control (expiry date and quantity)
 5. **Pharmacy Personnel**: Details the pharmacy personnel and their user details
@@ -129,32 +129,53 @@ The database includes 2 sample data entries for testing in each table:
 
 # File Structure
 ├── add_item.html              # Add new medications 
+
 ├── add_prescriptions.html     # Add customer prescriptions 
+
 ├── customerLogin.html         # Customer login page  
-├── Customers.html             # Customer registration page  
+
+├── Customers.html             # Customer registration page 
+
 ├── edit_item.html             # Edit medications  
-├── Frontpage.html             # Main dashboard/ Home page  
+
+├── Frontpage.html             # Main dashboard/ Home page 
+
 ├── manage_suppliers.html      # Add new suppliers
+
 ├── MedicalStaff.html          # Medical staff registration page  
+
 ├── medicalStaffLogin.html     # Medical staff login page  
+
 ├── Pharmacy.html              # Pharmacy personnel registration page 
+
 ├── pharmacyLogin.html         # Pharmacy personnel login page  
+
 ├── place_order1.html          # Page 1 for customer order placements  
+
 ├── place_order2.html          # Page 2 for medical staff order placement  
+
 ├── privacy_policy.html        # Privacy policy page  
+
 ├── remove_item.html           # Remove medications from the system  
+
 ├── terms_of_service.html      # Service terms page  
+
 ├── view_suppliers.html        # View all current suppliers in database 
+
 ├── Medications.sql            # Database schema and sample data  
+
 ├── Medications.db             # SQLite database (created after running setup)  
+
 ├── styles.css                 # CSS styles file  
+
 └── README.md                  # This file  
 
 
 # Usage
-1. Initialize the database using the SQLite command line method above
-2. Open LogiTrack.html in your web browser
-3. Navigate through the different pages to manage your medication inventory, user data and order creation. The use cases are valid for pharmacy personnel, medication staff and customers.
+1. Download all the provided files from github and save them in one folder
+2. Initialize the database using the SQLite command line method above
+3. Open LogiTrack.html in your web browser (by clicking on the page Frontpage.html)
+4. Navigate through the different pages to manage your medication inventory, user data and order creation. The use cases are valid for pharmacy personnel, medication staff and customers.
 
 # Technologies Used
 - HTML5: Structure and forms
