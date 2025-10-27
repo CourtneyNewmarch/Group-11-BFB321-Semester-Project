@@ -12,12 +12,12 @@
 A web-based pharmaceutical inventory management systems that functions to reduce medicine stockouts in South African healthcare facilities. The system is built with HTML, Bootstrap, CSS and SQLite.
 
 # Features
-- Dashboard: A summary view of medication inventory statistics and user activity  
-- Order Tracking: A detailed overview of the quantities and delivery dates of orders in the system  
-- Product Management: Add, view and remove medications in the system  
-- Stock Tracking: Update stock levels with detailed analytics  
-- Customer Management: Control customer use and track order histories for predictive analytics  
-- Supplier Management: Monitor supplier performance and streamline procurement
+- **Dashboard**: A summary view of medication inventory statistics and user activity  
+- **Order Tracking**: A detailed overview of the quantities and delivery dates of orders in the system  
+- **Product Management**: Add, view and remove medications in the system  
+- **Stock Tracking**: Update stock levels with detailed analytics  
+- **Customer Management**: Control customer use and track order histories for predictive analytics  
+- **Supplier Management**: Monitor supplier performance and streamline procurement
 
 # Database Setup
 1. Open command prompt/terminal in the project directory
