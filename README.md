@@ -128,20 +128,23 @@ The database includes 2 sample data entries for testing in each table:
 - **2 Customers**: Court Kadash and Tino Mukiwa along with their respective identity numbers
 
 # File Structure
-├── Frontpage.html             # Main dashboard  
-├── CustomerLogin.html         # Customer login page  
+├── add_item.html              # Add new medications 
+├── add_prescriptions.html     # Add customer prescriptions 
+├── customerLogin.html         # Customer login page  
 ├── Customers.html             # Customer registration page  
-├── add_item.html              # Add new medications  
 ├── edit_item.html             # Edit medications  
-├── remove_item.html           # Remove medications from the system  
-├── MedicalStaffLogin.html     # Medical staff login page  
+├── Frontpage.html             # Main dashboard/ Home page  
+├── manage_suppliers.html      # Add new suppliers
 ├── MedicalStaff.html          # Medical staff registration page  
+├── medicalStaffLogin.html     # Medical staff login page  
+├── Pharmacy.html              # Pharmacy personnel registration page 
 ├── pharmacyLogin.html         # Pharmacy personnel login page  
-├── Pharmacy.html              # Pharmacy personnel registration page  
 ├── place_order1.html          # Page 1 for customer order placements  
 ├── place_order2.html          # Page 2 for medical staff order placement  
 ├── privacy_policy.html        # Privacy policy page  
+├── remove_item.html           # Remove medications from the system  
 ├── terms_of_service.html      # Service terms page  
+├── view_suppliers.html        # View all current suppliers in database 
 ├── Medications.sql            # Database schema and sample data  
 ├── Medications.db             # SQLite database (created after running setup)  
 ├── styles.css                 # CSS styles file  
