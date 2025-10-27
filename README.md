@@ -15,7 +15,7 @@ A web-based pharmaceutical inventory management systems that functions to reduce
 - Dashboard: A summary view of medication inventory statistics and user activity  
 - Order Tracking: A detailed overview of the quantities and delivery dates of orders in the system  
 - Product Management: Add, view and remove medications in the system  
-- Stock Tracking: Update stock levels with detailed statistics  
+- Stock Tracking: Update stock levels with detailed analytics  
 - Customer Management: Control customer use and track order histories for predictive analytics  
 - Supplier Management: Monitor supplier performance and streamline procurement
 
@@ -108,7 +108,7 @@ erDiagram
 ```
 This Database includes the following tables:    
 ## Tables
-1. __Suppliers__: Medication suppliers
+1. __Suppliers__: Certified medication suppliers/vendors
 2. **Customers**: Registered customers and their relevant information
 3. **Medications**: Contains a variety of medications and their related informartion (category and price)
 4. **Batches**: Provides a batch view for ease in medications control (expiry date and quantity)
