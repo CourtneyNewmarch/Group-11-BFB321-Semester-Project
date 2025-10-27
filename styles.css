@@ -1,0 +1,745 @@
+/*Global Styles*/
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    line-height: 1.6;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    color: #2c3e50 !important;
+}
+
+.nav-link {
+    color: #495057 !important;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+    color: #1a73e8 !important;
+}
+
+.navbar-toggler {
+    border-color: #dee2e6;
+}
+
+/*Dashboard Cards*/
+.dashboard-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #25323f 0%, #34495e 100%);
+    color: rgb(39, 13, 207);
+    border-radius: 6px 6px 0 0;
+    padding: 1rem;
+    font-weight: 600;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+}
+
+.card-icon {
+    font-size: 2rem;
+    color: #dfe3e9;
+    margin-bottom: 0.5rem;
+}
+
+.btn-portal {
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background 0.2s ease-in-out;
+}
+
+.btn-portal:hover {
+    background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+    color: white;
+    text-decoration: none;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.feature-list li:last-child {
+    border-bottom: none;
+}
+
+.feature-list li i {
+    color: #28a745;
+    margin-right: 0.5rem;
+    width: 20px;
+}
+
+/*Info Section*/
+.info-section {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f5f7fa 100%);
+    border-left: 4px solid #1a73e8;
+}
+
+/*Portal Page Styles*/
+.portal-header {
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    color: white;
+    padding: 3rem 0;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.portal-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.portal-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.content-section {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    background-color: #f8f9fa7f;
+    font-weight: 600;
+}
+
+.btn-action {
+    background: #28a745;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background 0.2s ease-in-out;
+}
+
+.btn-action:hover {
+    background: #218838;
+    color: white;
+}
+
+.alert {
+    border-radius: 6px;
+}
+
+.form-control {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.form-control:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 0.2rem rgba(26, 115, 232, 0.25);
+}
+
+/*Fancy Enhancements - Global*/
+.hero-section {
+    background: linear-gradient(135deg, rgba(26, 115, 232, 0.8) 0%, rgba(13, 71, 161, 0.8) 100%), url('https://source.unsplash.com/random/1600x900/?healthcare,logistics,supply-chain') center/cover no-repeat fixed;
+    color: white;
+    padding: 8rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-section p {
+    font-size: 1.3rem;
+    font-weight: 300;
+}
+
+.hero-section .btn {
+    border-radius: 50px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/*Keyframe Animations*/
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/*Dashboard Cards Enhancements*/
+.dashboard-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    position: relative;
+}
+
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1a73e8, #0d47a1);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    border-radius: 10px 10px 0 0;
+    padding: 1.5rem;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    margin: -2rem -2rem 1.5rem -2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.btn-portal {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-portal:hover {
+    background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+    color: white;
+    text-decoration: none;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+}
+
+.feature-list li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+    transition: color 0.3s ease;
+}
+
+.feature-list li:hover i {
+    color: #1a73e8;
+}
+
+.feature-list li i {
+    color: #28a745;
+    margin-right: 0.75rem;
+    width: 20px;
+    transition: color 0.3s ease;
+}
+
+/* About Section Enhancements */
+.about-section {
+    padding: 6rem 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.about-section h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.about-section p {
+    font-size: 1.1rem;
+    color: #495057;
+    line-height: 1.8;
+}
+
+.about-image {
+    height: 350px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.about-image:hover {
+    transform: scale(1.05);
+}
+
+/*Contact Section Enhancements*/
+.contact-section {
+    padding: 6rem 0;
+    background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+    color: white;
+    position: relative;
+}
+
+.contact-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: url('https://source.unsplash.com/random/1600x900/?contact,office') center/cover no-repeat fixed;
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.contact-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.contact-section h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.contact-info {
+    list-style: none;
+    padding: 0;
+    font-size: 1.2rem;
+}
+
+.contact-info li {
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.3s ease;
+}
+
+.contact-info li:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding-left: 1rem;
+}
+
+.contact-info i {
+    color: #1a73e8;
+    margin-right: 0.75rem;
+    width: 25px;
+    font-size: 1.3rem;
+}
+
+.contact-section .btn {
+    border-radius: 50px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.contact-section .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/*Footer*/
+footer {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+    color: #adb5bd;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 0;
+}
+
+    footer a {
+    color: #adb5bd;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #79ade1;
+}
+
+
+/*Portal Header*/
+.portal-header {
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    color: white;
+    padding: 6rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.portal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://source.unsplash.com/random/1600x900/?portal,healthcare') center/cover no-repeat;
+    opacity: 0.2;
+    z-index: 0;
+}
+
+.portal-header .container {
+    position: relative;
+    z-index: 1;
+}
+
+.portal-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.portal-header p {
+    font-size: 1.3rem;
+    font-weight: 300;
+    opacity: 0.95;
+}
+
+/*Content Section*/
+.content-section {
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.content-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1a73e8, #0d47a1);
+}
+
+.content-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.content-section h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.content-section h2 i {
+    margin-right: 0.75rem;
+    color: #0f0f10;
+    font-size: 1.5rem;
+}
+
+/*Table*/
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.table th {
+    background: linear-gradient(135deg, #c4c4c7 0%, #e9ecef 100%);
+    font-weight: 600;
+    color: #010507;
+    border-color: #010507;
+    padding: 1rem;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: #010507;
+}
+
+.badge {
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+/*Buttons*/
+.btn-action {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.btn-action:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(108, 117, 125, 0.4);
+}
+
+.btn-action i {
+    margin-right: 0.25rem;
+}
+
+.btn-primary, .btn-outline-primary {
+    border-radius: 50px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0206fc 0%, #3b2793 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0d47a1 0%, #1a73e8 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+}
+
+.btn-outline-primary {
+    border-color: #1a73e8;
+    color: #1a73e8;
+}
+
+.btn-outline-primary:hover {
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/*Alert*/
+.alert {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/*Card*/
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.card i {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-top: 1rem;
+}
+
+.btn-info, .btn-primary, .btn-success {
+    border-radius: 50px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/*Form Fancy*/
+.form-control {
+    border-radius: 25px;
+    border: 2px solid #dfe9e9fd;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 0.2rem rgba(26, 115, 232, 0.25);
+    transform: scale(1.02);
+}
+
+/*Pharmacy Specific*/
+.pharmacy-header {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.pharmacy-header::before {
+    background: url('https://source.unsplash.com/random/1600x900/?pharmacy,medication,healthcare') center/cover no-repeat;
+    opacity: 0.2;
+}
+
+.pharmacy-content::before {
+    background: linear-gradient(90deg, #dc3545, #c82333);
+}
+
+.pharmacy-btn-primary {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.pharmacy-btn-primary:hover {
+    background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    transform: translateY(-2px);
+}
+
+.pharmacy-table th{
+background: palevioletred;
+}
+
+
+/*Medical Staff Specific*/
+.medical-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.medical-header::before {
+    background: url('https://source.unsplash.com/random/1600x900/?medical,staff,healthcare') center/cover no-repeat;
+    opacity: 0.2;
+}
+
+.medical-content::before {
+    background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.medical-btn-primary {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.medical-btn-primary:hover {
+    background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    transform: translateY(-2px);
+}
+
+.medical-table th{
+    background: mediumaquamarine;
+}
+
+/*Customer Specific*/
+.customer-header {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.customer-header::before {
+    background: url('https://source.unsplash.com/random/1600x900/?customer,service,healthcare') center/cover no-repeat;
+    opacity: 0.2;
+}
+
+.customer-content::before {
+    background: linear-gradient(90deg, #17a2b8, #138496);
+}
+
+.customer-btn-primary {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.customer-btn-primary:hover {
+    background: linear-gradient(135deg, #138496 0%, #17a2b8 100%);
+    box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
+     transform: translateY(-2px);
+}
+
+.customers-table th{
+background: lightskyblue;
+}}
+
+/*Responsive*/
+@media (max-width: 768px) {
+    .portal-header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .portal-header p {
+        font-size: 1.1rem;
+    }
+    
+    .content-section {
+        padding: 1.5rem;
+    }
+}

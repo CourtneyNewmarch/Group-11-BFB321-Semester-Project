@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Order - LogiTrack Customer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold fs-4" href="Frontpage.html">
+                <i class="bi bi-house-door-fill me-2 text-info"></i> LogiTrack
+            </a>
+            <a class="btn btn-outline-primary" href="Customers.html">Back to Customer Portal</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header text-white text-center">
+                        <h2><br><i class="bi bi-cart-plus me-2"></i>Place New Order</h2>
+                    </div>
+                    <form method="POST">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="customerName" class="form-label">Customer Name</label>
+                                <input type="text" class="form-control customer-form-control" id="CustomerName" name="CustomerName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="items" class="form-label">Items</label>
+                                <textarea class="form-control customer-form-control" id="items" name="items" rows="3" placeholder="List items, e.g. Aspirin (30 tabs), Paracetamol (20 tabs)" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="deliveryAddress" class="form-label">Delivery Address</label>
+                                <textarea class="form-control customer-form-control" id="deliveryAddress" name="deliveryAddress" rows="2" required></textarea>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <button type="submit" class="btn btn-primary">Place Order</button>
+                            <a href="Customers.html" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

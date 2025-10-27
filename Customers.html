@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LogiTrack - Customer Portal</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+    <!--Navbar-->
+
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm">
+
+        <div class="container-fluid">
+
+            <!--Brand-->
+
+            <a class="navbar-brand fw-bold fs-4" href="Frontpage.html">
+
+                <i class="bi bi-house-door-fill me-2 text-info"></i> LogiTrack
+
+            </a>
+
+            
+
+            <!--Toggler for mobile-->
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            
+
+            <!--Nav Items-->
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+
+                        <a class="nav-link fw-medium" href="Frontpage.html">Home</a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link fw-medium" href="pharmacyLogin.html">Pharmacy Portal</a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link fw-medium" href="medicalStaffLogin.html">Medical Staff Portal</a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link active fw-medium" href="Customers.html">Customer Portal</a>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+
+    <!--Portal Header-->
+
+    <header class="portal-header customer-header">
+
+        <div class="container">
+
+            <h1><i class="bi bi-people-fill me-2"></i>Customer Portal</h1>
+
+            <p class="lead">Connected care, wherever you are.</p>
+
+        </div>
+
+    </header>
+
+
+
+    <!--Main Content-->
+
+    <div class="container my-5">
+
+        <!--Order Management Section-->
+
+        <div class="content-section customer-content">
+
+            <h2 class="customer-h2"><i class="bi bi-basket3-fill"></i>Order Management</h2>
+
+            <div class="table-responsive">
+
+                <table class="table table-striped customers-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Order ID</th>
+
+                            <th>Date</th>
+
+                            <th>Items</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>ORD-001</td>
+
+                            <td>2025-10-18</td>
+
+                            <td>Aspirin (30 tabs)</td>
+
+
+                        </tr>
+
+                        <tr>
+
+                            <td>ORD-002</td>
+
+                            <td>2025-10-15</td>
+
+                            <td>Paracetamol (20 tabs)</td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="mt-4 text-center">
+
+                <a href="place_order1.html" class="btn btn-primary customer-btn-primary btn-lg"><i class="bi bi-plus-circle me-2"></i>Place New Order</a>
+
+            </div>
+
+        </div>
+
+
+
+        <!--Prescription Management Section-->
+
+        <div class="content-section customer-content">
+
+            <h2 class="customer-h2"><i class="bi bi-capsule-pill"></i>Prescription Management</h2>
+
+            <div class="row align-items-center">
+
+                <div class="col-md-12">
+
+                    <div class="alert alert-primary">
+
+                        <h5 class="alert-heading">Active Prescriptions</h5>
+
+                        <p class="mb-3">Upload your latest prescriptions securely with our encrypted system.</p>
+
+                        <a href="add_prescriptions.html" class="btn btn-outline-primary btn-sm"><i class="bi bi-upload"></i> Upload Prescription</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!--Support Section-->
+
+        <div class="content-section customer-content">
+
+            <h2 class="customer-h2"><i class="bi bi-chat-dots-fill"></i>Support Center</h2>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <div class="card h-100 text-center">
+
+                        <div class="card-body d-flex flex-column justify-content-center">
+
+                            <i class="bi bi-envelope display-3 text-primary mb-3"></i>
+
+                            <h5 class="card-title">Email Support</h5>
+
+                            <p class="card-text text-muted">Detailed assistance via email</p>
+
+                            <a href="mailto:support@logitrack.com" class="btn btn-primary mt-auto">Send Email</a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="card h-100 text-center">
+
+                        <div class="card-body d-flex flex-column justify-content-center">
+
+                            <i class="bi bi-telephone display-3 text-success mb-3"></i>
+
+                            <h5 class="card-title">Phone Support</h5>
+
+                            <p class="card-text text-muted">Call us for immediate help:  +27 (82) 305 1217</p>
+
+                            <a href="tel:18001234567" class="btn btn-success mt-auto">Call Now</a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <footer>
+
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <p class="mb-0">&copy; 2025 LogiTrack. All rights reserved.</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+
+</body>
+
+</html>
