@@ -61,7 +61,7 @@
                     <div class="card h-100 text-center">
                         <div class="card-body d-flex flex-column justify-content-center">
                             <i class="bi bi-box-seam text-primary display-3 mb-3"></i>
-                            <h1 class="card-title"> 3 </h1>
+                            <h1 class="card-title"> {{total_products}} </h1>
                             <h5 class="card-title">Total Products</h5>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                     <div class="card h-100 text-center">
                         <div class="card-body d-flex flex-column justify-content-center">
                             <i class="bi bi-boxes text-success display-3 mb-3"></i>
-                            <h1 class="card-title"> 230 </h1>
+                            <h1 class="card-title"> {{total_items}} </h1>
                             <h5 class="card-title">Total Items</h5>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="card h-100 text-center">
                         <div class="card-body d-flex flex-column justify-content-center">
                             <i class="bi bi-exclamation-triangle-fill display-3 text-danger mb-3"></i>
-                            <h1 class="card-title"> 1 </h1>
+                            <h1 class="card-title"> {{low_stock_count}}</h1>
                             <h5 class="card-title">Low Stock</h5>
                         </div>
                     </div>
@@ -129,47 +129,36 @@
                 <table class="table table-striped pharmacy-table">
                     <thead>
                         <tr>
-                            <th>Product ID</th>
-                            <th>Product Name</th> 
-                            <th>Expiry Date of Oldest Batch</th>
-                            <th>Quantity</th>
-                            <th>Safety Stock Level</th>
-                            <th>Price per Unit</th>
-                            <th>Total Value</th>
-                            <th>Status</th>
+                            <th scope="col">Product ID</th>
+                            <th scope="col">Product Name</th> 
+                            <th scope="col">Expiry Date of Oldest Batch</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Safety Stock Level</th>
+                            <th scope="col">Price per Unit</th>
+                            <th scope="col">Total Value</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>PD-001</A-001></td>
-                            <td>Aspirin 500mg</td>
-                            <td>2025-12-15</td>
-                            <td>150</td>
-                            <td>80</td>
-                            <td>R50</td>
-                            <td>R7500</td>
-                            <td><span class="badge bg-success">In Stock</span></td>
-                        </tr>
-                        <tr>
-                            <td>PD-002</td>
-                            <td>Paracetamol 1g</td>
-                            <td>2025-11-02</td>
-                            <td>80</td>
-                            <td>70</td>
-                            <td>R30</td>
-                            <td>R2400</td>
-                            <td><span class="badge bg-warning">Low Stock</span></td>                          
-                        </tr>
-                        <tr>
-                            <td>PD-003</td>
-                            <td>Ibuprofen 400mg</td>
-                            <td>2026-01-30</td>
-                            <td>0</td>
-                            <td>100</td>
-                            <td>R75</td>
-                            <td>R0</td>
-                            <td><span class="badge bg-danger">No Stock</span></td>                            
-                        </tr>
+                        {% for product in products %}
+                            <tr>
+                                <td>{{ product.medication_id }}</A-001></td>
+                                <td>{{ product.medication_name }}</td>
+                                <td>{{ product.expiry_date }}</td>
+                                <td>{{ product.quantity }} </td>
+                                <td>{{ product.safety_stock_level }}</td>
+                                <td>{{ "%.2f"|format(product.unit_price) }}</td>
+                                <td>{{ "%.2f"|format(product.quantity * product.unit_price) }}</td>
+                                <td>{% if product.quantity == 0 %}
+                                        <span class="badge bg-danger">Out of Stock</span>
+                                    {% elif product.quantity <= product.safety_stock_level %}
+                                        <span class="badge bg-warning">Low Stock</span>
+                                    {% else %}
+                                        <span class="badge bg-success">In Stock</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table> <br><br><br>
             </div> 
@@ -227,30 +216,22 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for row in orders %}
                         <tr>
-                            <td>ORD-001</td>
-                            <td>Abigail Trickey</td>
-                            <td>External</td>
-                            <td>2025-10-18</td>
-                            <td>Aspirin (30 tabs)</td>
-                            <td>
-                                <select class="form-select" id="stockFilter">
-                                    <option value="Pending">Pending</option>
-                                    <option value="Delivered">Delivered</option>
-                                </select>
-                            </td>
+                            <td>{{row.order_id}}</td>
+                            <td>{{row.full_name_and_surname}}</td>
+                            <td>{{row.user_type}}</td>
+                            <td>{{row.created_at}}</td>
+                            <td>{{row.item_ordered}}</td>
                         </tr>
-                        <tr>
-                            <td>ORD-002</td>
-                            <td>Ben Miller</td>
-                            <td>Internal</td>
-                            <td>2025-10-15</td>
-                            <td>Paracetamol (20 tabs)</td>
+                        {% endfor %}  
                             <td>
-                                <select class="form-select" id="stockFilter">
-                                    <option value="Pending">Pending</option>
-                                    <option value="Delivered">Delivered</option>
-                                </select>
+                                <form method="POST" >
+                                    <select class="form-select" id="status" name="status">
+                                        <option value="Pending">Pending</option>
+                                        <option value="Delivered">Delivered</option>
+                                    </select>
+                                </form>
                             </td>
                         </tr>
                     </tbody>

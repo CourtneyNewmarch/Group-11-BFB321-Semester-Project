@@ -95,47 +95,36 @@
                 <table class="table table-striped medical-table">
                     <thead>
                         <tr>
-                            <th>Product ID</th>
-                            <th>Product Name</th> 
-                            <th>Expiry Date of Oldest Batch</th>
-                            <th>Quantity</th>
-                            <th>Safety Stock Level</th>
-                            <th>Price per Unit</th>
-                            <th>Total Value</th>
-                            <th>Status</th>
+                            <th scope="col">Product ID</th>
+                            <th scope="col">Product Name</th> 
+                            <th scope="col">Expiry Date of Oldest Batch</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Safety Stock Level</th>
+                            <th scope="col">Price per Unit</th>
+                            <th scope="col">Total Value</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>PD-001</A-001></td>
-                            <td>Aspirin 500mg</td>
-                            <td>2025-12-15</td>
-                            <td>150</td>
-                            <td>80</td>
-                            <td>R50</td>
-                            <td>R7500</td>
-                            <td><span class="badge bg-success">In Stock</span></td>
-                        </tr>
-                        <tr>
-                            <td>PD-002</td>
-                            <td>Paracetamol 1g</td>
-                            <td>2025-11-02</td>
-                            <td>80</td>
-                            <td>70</td>
-                            <td>R30</td>
-                            <td>R2400</td>
-                            <td><span class="badge bg-warning">Low Stock</span></td>                          
-                        </tr>
-                        <tr>
-                            <td>PD-003</td>
-                            <td>Ibuprofen 400mg</td>
-                            <td>2026-01-30</td>
-                            <td>0</td>
-                            <td>100</td>
-                            <td>R75</td>
-                            <td>R0</td>
-                            <td><span class="badge bg-danger">No Stock</span></td>                            
-                        </tr>
+                        {% for row in products1 %}
+                            <tr>
+                                <td>{{ row.medication_id }}</A-001></td>
+                                <td>{{ row.medication_name }}</td>
+                                <td>{{ row.expiry_date }}</td>
+                                <td>{{ row.quantity }} </td>
+                                <td>{{ row.safety_stock_level }}</td>
+                                <td>{{ "%.2f"|format(row.unit_price) }}</td>
+                                <td>{{ "%.2f"|format(row.quantity * row.unit_price) }}</td>
+                                <td>{% if row.quantity == 0 %}
+                                        <span class="badge bg-danger">Out of Stock</span>
+                                    {% elif row.quantity <= row.safety_stock_level %}
+                                        <span class="badge bg-warning">Low Stock</span>
+                                    {% else %}
+                                        <span class="badge bg-success">In Stock</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table> 
             </div>
@@ -155,16 +144,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for row in orders1 %}
                         <tr>
-                            <td>ORD-001</td>
-                            <td>2025-10-18</td>
-                            <td>Aspirin (30 tabs)</td>
+                            <td>{{row.order_id}}</td>
+                            <td>{{row.created_at}}</td>
+                            <td>{{row.item_ordered}}</td>
                         </tr>
-                        <tr>
-                            <td>ORD-002</td>
-                            <td>2025-10-15</td>
-                            <td>Paracetamol (20 tabs)</td>
-                        </tr>
+                        {% endfor %}  
                     </tbody>
                 </table>
             </div>

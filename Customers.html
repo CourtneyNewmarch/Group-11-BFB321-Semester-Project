@@ -134,26 +134,17 @@
 
                     <tbody>
 
-                        <tr>
-
-                            <td>ORD-001</td>
-
-                            <td>2025-10-18</td>
-
-                            <td>Aspirin (30 tabs)</td>
-
-
-                        </tr>
+                       {% for row in orders2 %}
 
                         <tr>
+                            <td>{{row.order_id}}</td>
 
-                            <td>ORD-002</td>
+                            <td>{{row.created_at}}</td>
 
-                            <td>2025-10-15</td>
-
-                            <td>Paracetamol (20 tabs)</td>
-
+                            <td>{{row.item_ordered}}</td>
                         </tr>
+
+                        {% endfor %} 
 
                     </tbody>
 
