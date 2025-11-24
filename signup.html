@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="card shadow">
+          <div class="card-body">
+            <h2 class="text-center mb-4">Sign Up</h2>
+            <form method="POST" action="{{ url_for('signup') }}">
+
+              <div class="mb-3">
+                <label for="role" class="form-label">Register As</label>
+                <select class="form-select" id="role" name="role" required>
+                  <option value="customer">Customer</option>
+                  <option value="medical">Medical Staff</option>
+                  <option value="pharmacy">Pharmacy Personnel</option>
+                </select>
+              </div>
+
+              <div class="mb-3" id="customerIdField">
+                <label for="customer_id" class="form-label">Customer ID</label>
+                <input type="text" class="form-control" id="customer_id" name="customer_id" placeholder="Enter Customer ID">
+              </div>
+
+              <div class="mb-3 d-none" id="usernameField">
+                <label for="username" class="form-label">Pharmacy Username</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username" disabled>
+              </div>
+
+              <div class="mb-3">
+                <label for="full_name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="full_name" name="full_name" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+              </div>
+
+              <div class="d-grid mt-3">
+                <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const roleSelect = document.getElementById('role');
+    const customerIdField = document.getElementById('customerIdField');
+    const usernameField = document.getElementById('usernameField');
+    const customerIdInput = document.getElementById('customer_id');
+    const usernameInput = document.getElementById('username');
+
+    function toggleFields() {
+      if (roleSelect.value === 'pharmacy') {
+       
+        usernameField.classList.remove('d-none');
+        customerIdField.classList.add('d-none');
+
+        
+        usernameInput.disabled = false;
+        usernameInput.required = true;
+
+        customerIdInput.required = false;
+        customerIdInput.disabled = true;
+        customerIdInput.value = '';
+      } 
+      else {
+        customerIdField.classList.remove('d-none');
+        usernameField.classList.add('d-none');
+
+        customerIdInput.disabled = false;
+        customerIdInput.required = true;
+
+        usernameInput.required = false;
+        usernameInput.disabled = true;
+        usernameInput.value = '';
+      }
+    }
+
+    roleSelect.addEventListener('change', toggleFields);
+    toggleFields(); 
+  </script>
+</body>
+</html>
