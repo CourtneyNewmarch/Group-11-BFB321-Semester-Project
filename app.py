@@ -1,244 +1,174 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
 
 app = Flask(__name__)
 app.secret_key = '23456'
 
-#Linking the database to the backend code
+# Linking the database to the backend code
 def get_database_connection():
     """Get database connection"""
     conn = sqlite3.connect('Medications.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-#Pharmacy's Dashboard 
-@app.route('/Pharmacy')
-def dashboard():
-    conn = get_db_connection()
-    
-    # Get total products (sum of all products)
-    total_products = conn.execute('SELECT count(medication_name) FROM medications').fetchone()[0] or 0
-
-    # Get total items (sum of all batches)
-    total_items = conn.execute('SELECT SUM(quantity) FROM batches').fetchone()[0] or 0
-    
-    # Get low stock count (products with quantity <= min_stock_level)
-    low_stock_count = conn.execute( '''
-        SELECT SUM(b.quantity), m.safety_stock_level
-        FROM medication m
-        INNER JOIN batches b 
-        ON m.medication_id = b.medication_id
-        GROUP BY m.medication_id
-        WHERE SUM(b.quantity) <= m.safety_stock_level
-        ''').fetchone()[0]
-    
-    conn.close()
-    return render_template('Pharmacy.html', 
-                         total_products=total_products,
-                         total_items=total_items,
-                         low_stock_count=low_stock_count,
-                         )
+# Front Page Route (Fixes navbar home link)
+@app.route('/')
+def home():
+    return render_template('Frontpage.html')
 
 
-#The inventory management table for the pharmacy page
-@app.route('/Pharmacy')
-def Pharmary_InventoryTable():
+
+# Pharmacy Portal's Dashboard - Consolidated route for all pharmacy data
+@app.route('/pharmacy', methods=['GET', 'POST'])
+def pharmacy_dashboard():
     conn = get_database_connection()
 
-    products = conn.execute('''
-        SELECT m.medication_id, m.medication_name, MIN(b.expiry_date), SUM(b.quantity), m.safety_stock_level, m.unit_price
-        FROM medication m
-        INNER JOIN batches b 
-        ON m.medication_id = b.medication_id
-        GROUP BY m.medication_id
-        ORDER BY m.medication_id
-    ''').fetchall()
+    
+    # Dashboard stats
+    total_products = conn.execute('SELECT COUNT(*) FROM medications').fetchone()[0] or 0
+    total_items = conn.execute('SELECT COALESCE(SUM(quantity), 0) FROM batches').fetchone()[0] or 0
+    
 
-    conn.close()
-    return render_template('Pharmacy.html', products=products)
+    # Dashboard stats (Fixed low stock count query)
+    low_stock_query = """
+        SELECT COUNT(*)
+        FROM (
+            SELECT m.medication_id, COALESCE(SUM(b.quantity), 0) as total_qty, m.safety_stock_level
+            FROM medications m
+            LEFT JOIN batches b ON m.medication_id = b.medication_id
+            GROUP BY m.medication_id
+            HAVING total_qty <= m.safety_stock_level
+        ) sub
+    """
+    low_stock_count = conn.execute(low_stock_query).fetchone()[0] or 0
 
+    
+    # Products for inventory table (Fixed query with LEFT JOIN)
+    products_query = """
+        SELECT 
+            m.medication_id,
+            m.medication_name,
+            MIN(b.expiry_date) as expiry_date,
+            COALESCE(SUM(b.quantity), 0) as quantity,
+            m.safety_stock_level,
+            m.unit_price
+        FROM medications m
+        LEFT JOIN batches b ON m.medication_id = b.medication_id
+        GROUP BY m.medication_id, m.medication_name, m.safety_stock_level, m.unit_price
+        ORDER BY m.medication_name
+    """
+    products = conn.execute(products_query).fetchall()
+    
 
-#The inventory availablity table for the medical staff page
-@app.route('/MedicalStaff')
-def MedicalStaff_InventoryTable():
-    conn = get_database_connection()
-
-    products1 = conn.execute('''
-        SELECT m.medication_id, m.medication_name, MIN(b.expiry_date), SUM(b.quantity), m.safety_stock_level, m.unit_price
-        FROM medication m
-        INNER JOIN batches b 
-        ON m.medication_id = b.medication_id
-        GROUP BY m.medication_id
-        ORDER BY m.medication_id
-    ''').fetchall()
-
-    conn.close()
-    return render_template('MedicalStaff.html', products1=products1)
-
-#The order management table for the pharmacy page 
-app.route('/Pharmacy',  methods=['GET', 'POST']  )
-def Pharmacy_OrderTable():
-    conn = get_database_connection()
-    orders = conn.execute('''
-        SELECT c.order_id, c.full_name_and_surname, c.user_type, c.created_at, c.item_ordered
+    # Orders for order management table 
+    orders_query = """
+        SELECT 
+            c.order_id,
+            c.full_name_and_surname,
+            c.user_type,
+            c.created_at,
+            c.item_ordered,
+            c.status
         FROM customers c
+        WHERE c.order_id IS NOT NULL
         ORDER BY c.created_at DESC
-    ''').fetchall()
-    conn.close()
+    """
+    orders = conn.execute(orders_query).fetchall()
+    
 
-    conn = get_database_connection
+    # Handle POST for order status update in order management table
     if request.method == 'POST':
-        try:
-            status = request.form['status']
-            conn.execute('''
-                INSERT INTO customers (status)
-                VALUES (?)
-            ''', (status))
+        order_id = request.form.get('order_id')
+        status = request.form['status']
+        if order_id:
+            conn.execute(
+                'UPDATE customers SET status = ? WHERE order_id = ?',
+                (status, order_id)
+            )
             conn.commit()
-            conn.close()
-            return redirect(url_for('view_inventory'))
-        
-    return render_template('Pharmacy.html', orders=orders)
-
-
-#The order management table for the medical staff page
-app.route('/MedicalStaff')
-def MedicalStaff_OrderTable():
-    conn = get_database_connection()
-
-    orders1 = conn.execute('''
-        SELECT c.order_id, c.created_at, c.item_ordered
-        FROM customers c
-        WHERE c.user_type = 'internal_user'
-        ORDER BY c.order_id
-    ''').fetchall()
+            flash('Order status updated successfully!', 'success')
+        else:
+            flash('Error: No order ID provided.', 'error')
+        conn.close()
+        return redirect(url_for('pharmacy_dashboard'))
+    
 
     conn.close()
-    return render_template('MedicalStaff.html', orders1=orders1)
+    return render_template('Pharmacy.html',
+                           total_products=total_products,
+                           total_items=total_items,
+                           low_stock_count=low_stock_count,
+                           products=products,
+                           orders=orders)
 
 
-#The order management table for the customer page
-app.route('/Customers')
-def Customer_OrderTable():
+
+
+# Medical Staff Portal's Dashboard - inventory and orders table, and delivery stats
+@app.route('/medicalstaff')
+def medicalstaff_dashboard():
     conn = get_database_connection()
+    
 
-    orders2 = conn.execute('''
-        SELECT c.order_id, c.created_at, c.item_ordered
+    products_query = """
+        SELECT 
+            m.medication_id,
+            m.medication_name,
+            MIN(b.expiry_date) as expiry_date,
+            COALESCE(SUM(b.quantity), 0) as quantity,
+            m.safety_stock_level,
+            m.unit_price
+        FROM medications m
+        LEFT JOIN batches b ON m.medication_id = b.medication_id
+        GROUP BY m.medication_id, m.medication_name, m.safety_stock_level, m.unit_price
+        ORDER BY m.medication_name
+    """
+    products1 = conn.execute(products_query).fetchall()
+    
+
+    # Also fetch orders for medical staff (internal users)
+    orders_query = """
+        SELECT 
+            c.order_id,
+            c.created_at,
+            c.item_ordered
         FROM customers c
-        WHERE c.user_type = 'external_user'
+        WHERE c.user_type = 'internal_user' AND c.order_id IS NOT NULL
         ORDER BY c.order_id
-    ''').fetchall()
+    """
+    orders1 = conn.execute(orders_query).fetchall()
 
+    # Dashboard stats
+    total_pending = conn.execute('SELECT COUNT(*) FROM customers WHERE customers.status == "Pending" ').fetchone()[0] or 0
+    total_delivered = conn.execute('SELECT COUNT(*) FROM customers WHERE customers.status == "Delivered" ').fetchone()[0] or 0
+    
+    conn.close()
+    return render_template('MedicalStaff.html', products1=products1, orders1=orders1, total_pending=total_pending, total_delivered=total_delivered)
+
+
+
+# Customer Portal's Dashboard - Orders Table
+@app.route('/customers')
+def customer_dashboard():
+    conn = get_database_connection()
+    
+    orders_query = """
+        SELECT 
+            c.order_id,
+            c.created_at,
+            c.item_ordered
+        FROM customers c
+        WHERE c.user_type = 'external_user' AND c.order_id IS NOT NULL
+        ORDER BY c.order_id
+    """
+    orders2 = conn.execute(orders_query).fetchall()
+    
     conn.close()
     return render_template('Customers.html', orders2=orders2)
 
-#The suppliers table for the pharmacy page 
-
-#Add supplier
-@app.route('/manage_suppliers', methods=['POST'])
-def add_supplier():
-    if request.method == 'POST':
-        try:
-            # Get form data
-            supplier_name = request.form['supplierName']
-            contact_person = request.form['contactPerson']
-            email = request.form.get('email', '').strip()
-            phone = request.form.get('phoneNumber', '').strip()
-            address = request.form.get('address', '').strip()
-            
-            conn = get_db_connection()
-            
-            # Insert new supplier into the database
-            conn.execute('''
-                INSERT INTO suppliers (supplier_name, contact_person, email, phone, address)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (supplier_name, contact_person, email, phone, address))
-            
-            conn.commit()
-            conn.close()
-            
-            flash('Supplier added successfully!', 'success')
-            return redirect(url_for('Pharmacy.html'))
-             
-    return render_template('manage_suppliers.html')
 
 
-#create order database for customers
-con = sqlite3.connect("orders.db")
-cur = con.cursor()
-
-cur.execute("""
-CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    customer_name TEXT NOT NULL,
-    items TEXT NOT NULL,
-    delivery_address TEXT NOT NULL,
-    prescription_required TEXT,
-    special_instructions TEXT,
-    delivery_date TEXT,
-    delivery_time TEXT,
-    payment_method TEXT
-)
-""")
-
-con.commit()
-con.close()
-
-#move the orders to the db
-def save_order_to_db(data):
-    con = sqlite3.connect("orders.db")
-    con.row_factory= sqlite3.Row                                
-    cur = con.cursor()
-
-    cur.execute("""
-        INSERT INTO orders (
-            customer_name, items, delivery_address,
-            prescription_required, special_instructions,
-            delivery_date, delivery_time, payment_method
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        data['customer_name'],
-        data['items'],
-        data['delivery_address'],
-        data['prescription_required'],
-        data['special_instructions'],
-        data['delivery_date'],
-        data['delivery_time'],
-        data['payment_method']
-    ))
-
-    con.commit()
-    con.close()
-
-# add the order
-@app.route('/Customers', methods=['GET', 'POST'])
-def place_order():
-    form= OrderForm()
-
-    if form.validate_on_submit():
-        # Prepare order data as a dictionary
-        order_data = {
-            'customer_name': form.customer_name.data,
-            'items': form.items.data,
-            'delivery_address': form.delivery_address.data,
-            'prescription_required': form.prescription_required.data,
-            'special_instructions': form.special_instructions.data,
-            'delivery_date': str(form.delivery_date.data),
-            'delivery_time': form.delivery_time.data,
-            'payment_method': form.payment_method.data
-        }
-
-        # Save to SQLite
-        save_order_to_db(order_data)
-
-        
-        return redirect(url_for('order_success'))
-
-    return render_template('place_order1.html', form=form)
-
-
-# Add Item functionality
+# Add Item functionality in Pharmacy Portal
 @app.route('/add_item', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
@@ -265,12 +195,16 @@ def add_item():
                 ''', (product_id, product_name))
                 flash(f'New medication {product_name} created with ID {product_id}', 'info')
             
-            # Add batch
+            # Add batch to the bathches table
             conn.execute('''
                 INSERT INTO batches (batch_id, quantity, expiry_date, medication_id)
                 VALUES (?, ?, ?, ?)
             ''', (batch_id, quantity, expiry_date, product_id))
-            
+
+            conn.commit()
+            conn.close()
+
+            conn = get_database_connection()
             # Record stock update
             conn.execute('''
                 INSERT INTO stock_updates (medication_id, supplier_id, batch_id, username, 
@@ -281,8 +215,8 @@ def add_item():
             conn.commit()
             conn.close()
             
-            flash(f'Item {product_name} (Batch {batch_id}) added successfully!', 'success')
-            return redirect(url_for('dashboard'))
+            flash(f'Item {product_name} and Batch {batch_id}) added successfully!', 'success')
+            return redirect(url_for('pharmacy'))
             
         except sqlite3.IntegrityError:
             flash('Error: Batch ID already exists or invalid medication ID', 'error')
@@ -291,7 +225,9 @@ def add_item():
     
     return render_template('add_item.html')
 
-# Remove Item functionality
+
+
+# Remove Item functionality in Pharmacy Portal
 @app.route('/remove_item', methods=['GET', 'POST'])
 def remove_item():
     if request.method == 'POST':
@@ -309,7 +245,7 @@ def remove_item():
             batch = conn.execute('''
                 SELECT quantity FROM batches 
                 WHERE batch_id = ? AND medication_id = ?
-            ''', (batch_id, product_id)).fetchone()
+            ''', (batch_id, product_id)).fetchone()[0]
             
             if not batch:
                 flash('Error: Batch not found for the specified product', 'error')
@@ -333,6 +269,10 @@ def remove_item():
                     UPDATE batches SET quantity = ? WHERE batch_id = ?
                 ''', (new_quantity, batch_id))
             
+            conn.commit()
+            conn.close()
+
+            conn = get_database_connection()
             # Record stock update
             conn.execute('''
                 INSERT INTO stock_updates (medication_id, supplier_id, batch_id, username, 
@@ -351,7 +291,9 @@ def remove_item():
     
     return render_template('remove_item.html')
 
-# Edit Safety Stock functionality
+
+
+# Edit Safety Stock functionality in Pharmacy Portal
 @app.route('/edit_item', methods=['GET', 'POST'])
 def edit_item():
     if request.method == 'POST':
@@ -380,10 +322,14 @@ def edit_item():
             # Update safety stock level
             conn.execute('''
                 UPDATE medications 
-                SET safety_stock_level = ?, medication_name = ?
+                SET safety_stock_level = ? 
                 WHERE medication_id = ?
-            ''', (new_safety_stock, product_name, product_id))
-            
+            ''', (new_safety_stock, product_id))
+
+            conn.commit()
+            conn.close()
+
+            conn = get_database_connection()
             # Record stock update for tracking changes
             quantity_change = new_safety_stock - current_safety_stock
             conn.execute('''
@@ -396,64 +342,153 @@ def edit_item():
             conn.close()
             
             flash(f'Safety stock level for {product_name} updated to {new_safety_stock}', 'success')
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('pharmacy'))
             
         except Exception as e:
             flash(f'Error updating safety stock: {str(e)}', 'error')
     
     return render_template('edit_item.html')
 
-# Helper function to get database connection (fixing the typo in your existing code)
-def get_db_connection():
-    """Get database connection"""
-    conn = sqlite3.connect('Medications.db')
-    conn.row_factory = sqlite3.Row
-    return conn
 
-# Also update your existing dashboard function to use the correct connection function
-@app.route('/Pharmacy')
-def dashboard():
-    conn = get_db_connection()  # Fixed function name
-    
-    # Get total products (sum of all products)
-    total_products = conn.execute('SELECT count(medication_name) FROM medications').fetchone()[0] or 0
 
-    # Get total items (sum of all batches)
-    total_items = conn.execute('SELECT SUM(quantity) FROM batches').fetchone()[0] or 0
-    
-    # Get low stock count (products with quantity <= min_stock_level)
-    low_stock_count = conn.execute(''' 
-        SELECT COUNT(*) 
-        FROM medications m
-        WHERE (
-            SELECT COALESCE(SUM(b.quantity), 0) 
-            FROM batches b 
-            WHERE b.medication_id = m.medication_id
-        ) <= m.safety_stock_level
-    ''').fetchone()[0] or 0
-    
-    # Get products for inventory table
-    products = conn.execute('''
-        SELECT m.medication_id, m.medication_name, MIN(b.expiry_date) as earliest_expiry, 
-               SUM(b.quantity) as total_quantity, m.safety_stock_level, m.unit_price
-        FROM medications m
-        LEFT JOIN batches b ON m.medication_id = b.medication_id
-        GROUP BY m.medication_id
-        ORDER BY m.medication_id
-    ''').fetchall()
-    
-    # Get orders for order table
-    orders = conn.execute('''
-        SELECT order_id, full_name_and_surname, user_type, created_at, item_ordered
-        FROM customers 
-        ORDER BY created_at DESC
-    ''').fetchall()
-    
+# Add suppliers in Pharmacy Portal
+@app.route('/manage_suppliers', methods=['GET', 'POST'])
+def manage_suppliers():
+    if request.method == 'POST':
+        # Get form data
+        supplier_name = request.form['supplierName']
+        contact_person = request.form['contactPerson']
+        email = request.form.get('email', '').strip()
+        phone = request.form.get('phoneNumber', '').strip()
+        address = request.form.get('address', '').strip()
+         
+        conn = get_database_connection()
+         
+        # Insert new supplier into the database
+        conn.execute('''
+            INSERT INTO suppliers (supplier_name, contact_person, email, phone, address)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (supplier_name, contact_person, email, phone, address))
+         
+        conn.commit()
+        conn.close()
+         
+        flash('Supplier added successfully!', 'success')
+        return redirect(url_for('pharmacy_dashboard'))  
+        
+    # For GET, render the form (assuming manage_suppliers.html exists)
+    return render_template('manage_suppliers.html')
+
+
+
+# Viewing suppliers in Pharmacy Portal 
+@app.route('/view_suppliers')
+def view_suppliers():
+    conn = get_database_connection()
+    suppliers = conn.execute('SELECT * FROM suppliers').fetchall()
     conn.close()
-    
-    return render_template('Pharmacy.html', 
-                         total_products=total_products,
-                         total_items=total_items,
-                         low_stock_count=low_stock_count,
-                         products=products,
-                         orders=orders)
+    return render_template('view_suppliers.html', suppliers=suppliers)  
+
+
+
+# add external customer orders
+@app.route('/place_order1', methods=['GET', 'POST'])
+def place_customer_order():
+
+    if request.method == 'POST':
+        # Get form data
+        Customer_id = request.form['CustomerID']
+        Customer_name = request.form['CustomerName']
+        items = request.form['items']
+        address = request.form['deliveryAddress']
+         
+        conn = get_database_connection()
+         
+        # Insert new order into the database
+        conn.execute('''
+            INSERT INTO customers (customer_id, full_name_and_surname, user_type, item_ordered, address )
+            VALUES (?, ?, 'external_user', ?, ?)
+        ''', (Customer_id, Customer_name, items, address))
+         
+        conn.commit()
+        conn.close()
+         
+        flash('Order added successfully!', 'success')
+        return redirect(url_for('customer_dashboard'))  
+        
+    return render_template('place_order1.html')
+
+
+
+# add internal customer (medical staff) orders
+@app.route('/place_order2', methods=['GET', 'POST'])
+def place_medicalstaff_order():
+
+    if request.method == 'POST':
+        # Get form data
+        Customer_id = request.form['MedicalStaffID']
+        Customer_name = request.form['MedicalStaffName']
+        items = request.form['items']
+        address = request.form['deliveryAddress']
+         
+        conn = get_database_connection()
+         
+        # Insert new order into the database
+        conn.execute('''
+            INSERT INTO customers (customer_id, full_name_and_surname, user_type, item_ordered, address )
+            VALUES (?, ?, 'internal_user', ?, ?)
+        ''', (Customer_id, Customer_name, items, address))
+         
+        conn.commit()
+        conn.close()
+         
+        flash('Order added successfully!', 'success')
+        return redirect(url_for('medicalstaff_dashboard'))  
+        
+    return render_template('place_order2.html')
+
+
+
+# Add prescriptions
+@app.route('/add_prescriptions')
+def add_prescriptions():
+    return render_template('add_prescriptions.html')
+
+
+
+# Add terms of services
+@app.route('/terms_of_services')
+def add_termsOfServices():
+    return render_template('terms_of_serives.html')
+
+# Add privacy policy
+@app.route('/privacy_policy')
+def add_privacyPolicy():
+    return render_template('privacy_policy.html')
+
+
+
+# Pharmacy Staff Login
+@app.route('/pharmacylogin')
+def pharmacy_login():
+    return render_template('pharmacyLogin.html')
+
+# Medical Staff Login
+@app.route('/medicalstafflogin')
+def medicalStaff_login():
+    return render_template('medicalStaffLogin.html')
+
+# Customer Login
+@app.route('/customerlogin')
+def customer_login():
+    return render_template('customerLogin.html')
+
+# Signup Page
+@app.route('/signup')
+def signup_page():
+    return render_template('signup.html')
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

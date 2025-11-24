@@ -80,13 +80,15 @@ CREATE TABLE stock_updates (
 
 -- Create customers table
 CREATE TABLE customers (
-    customer_id TEXT PRIMARY KEY,
+    order_id INTEGER PRIMARY KEY AUTOINCREMENT,
     full_name_and_surname TEXT NOT NULL,
-    password TEXT NOT NULL,
+    password TEXT,
     user_type TEXT NOT NULL CHECK (user_type IN ('external_user', 'internal_user')),
-    order_id INTEGER, 
+    customer_id TEXT, 
     item_ordered TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status TEXT CHECK (status IN ('Pending', 'Delivered')) DEFAULT 'Pending',
+    address TEXT
 );
 
 --insert sample pharmacy_personnel
@@ -115,13 +117,6 @@ INSERT INTO stock_updates (medication_id, supplier_id, batch_id, username, updat
 ('N-442', 2, 2, 'GMaxulu', 'remove', 10, 22, 12, 'sale');
 
 --insert sample customers
-INSERT INTO customers (customer_id, full_name_and_surname, password, user_type, order_id, item_ordered) VALUES
-('FN8772', 'Court Kadash', 'Rv22xb#', 'internal_user', 5, 'rifampin'),
-('9006150085081', 'Tino Mukiwa', 'piLtt68', 'external_user', 7, 'efavirenz');
-
-
-
-
-
-
-
+INSERT INTO customers (customer_id, full_name_and_surname, password, user_type, item_ordered, address) VALUES
+('FN8772', 'Court Kadash', 'Rv22xb#', 'internal_user', 'rifampin', 'ward 9'),
+('9006150085081', 'Tino Mukiwa', 'piLtt68', 'external_user', 'efavirenz', 'hatfield'); 
