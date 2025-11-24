@@ -163,3 +163,76 @@ def add_supplier():
     return render_template('manage_suppliers.html')
 
 
+#create order database for customers
+con = sqlite3.connect("orders.db")
+cur = con.cursor()
+
+cur.execute("""
+CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_name TEXT NOT NULL,
+    items TEXT NOT NULL,
+    delivery_address TEXT NOT NULL,
+    prescription_required TEXT,
+    special_instructions TEXT,
+    delivery_date TEXT,
+    delivery_time TEXT,
+    payment_method TEXT
+)
+""")
+
+con.commit()
+con.close()
+
+#move the orders to the db
+def save_order_to_db(data):
+    con = sqlite3.connect("orders.db")
+    con.row_factory= sqlite3.Row                                
+    cur = con.cursor()
+
+    cur.execute("""
+        INSERT INTO orders (
+            customer_name, items, delivery_address,
+            prescription_required, special_instructions,
+            delivery_date, delivery_time, payment_method
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        data['customer_name'],
+        data['items'],
+        data['delivery_address'],
+        data['prescription_required'],
+        data['special_instructions'],
+        data['delivery_date'],
+        data['delivery_time'],
+        data['payment_method']
+    ))
+
+    con.commit()
+    con.close()
+
+# add the order
+@app.route('/Customers', methods=['GET', 'POST'])
+def place_order():
+    form= OrderForm()
+
+    if form.validate_on_submit():
+        # Prepare order data as a dictionary
+        order_data = {
+            'customer_name': form.customer_name.data,
+            'items': form.items.data,
+            'delivery_address': form.delivery_address.data,
+            'prescription_required': form.prescription_required.data,
+            'special_instructions': form.special_instructions.data,
+            'delivery_date': str(form.delivery_date.data),
+            'delivery_time': form.delivery_time.data,
+            'payment_method': form.payment_method.data
+        }
+
+        # Save to SQLite
+        save_order_to_db(order_data)
+
+        
+        return redirect(url_for('order_success'))
+
+    return render_template('place_order1.html', form=form)
