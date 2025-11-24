@@ -236,3 +236,224 @@ def place_order():
         return redirect(url_for('order_success'))
 
     return render_template('place_order1.html', form=form)
+
+
+# Add Item functionality
+@app.route('/add_item', methods=['GET', 'POST'])
+def add_item():
+    if request.method == 'POST':
+        try:
+            # Get form data
+            product_id = request.form['productID']
+            product_name = request.form['productName']
+            batch_id = request.form['batchID']
+            quantity = int(request.form['quantity'])
+            expiry_date = request.form['expiryDate']
+            
+            conn = get_database_connection()
+            
+            # Check if medication exists, if not create it
+            medication = conn.execute(
+                'SELECT * FROM medications WHERE medication_id = ?', (product_id,)
+            ).fetchone()
+            
+            if not medication:
+                # Create new medication with default safety stock level
+                conn.execute('''
+                    INSERT INTO medications (medication_id, medication_name, safety_stock_level, unit_price, supplier_id)
+                    VALUES (?, ?, 10, 0.0, 1)
+                ''', (product_id, product_name))
+                flash(f'New medication {product_name} created with ID {product_id}', 'info')
+            
+            # Add batch
+            conn.execute('''
+                INSERT INTO batches (batch_id, quantity, expiry_date, medication_id)
+                VALUES (?, ?, ?, ?)
+            ''', (batch_id, quantity, expiry_date, product_id))
+            
+            # Record stock update
+            conn.execute('''
+                INSERT INTO stock_updates (medication_id, supplier_id, batch_id, username, 
+                                         update_type, quantity_change, old_quantity, new_quantity, reason)
+                VALUES (?, 1, ?, 'system', 'add', ?, 0, ?, 'restock')
+            ''', (product_id, batch_id, quantity, quantity))
+            
+            conn.commit()
+            conn.close()
+            
+            flash(f'Item {product_name} (Batch {batch_id}) added successfully!', 'success')
+            return redirect(url_for('dashboard'))
+            
+        except sqlite3.IntegrityError:
+            flash('Error: Batch ID already exists or invalid medication ID', 'error')
+        except Exception as e:
+            flash(f'Error adding item: {str(e)}', 'error')
+    
+    return render_template('add_item.html')
+
+# Remove Item functionality
+@app.route('/remove_item', methods=['GET', 'POST'])
+def remove_item():
+    if request.method == 'POST':
+        try:
+            # Get form data
+            product_id = request.form['productID']
+            product_name = request.form['productName']
+            batch_id = request.form['batchID']
+            quantity_to_remove = int(request.form['quantity'])
+            reason = request.form.get('reason', 'other')
+            
+            conn = get_database_connection()
+            
+            # Check if batch exists and has sufficient quantity
+            batch = conn.execute('''
+                SELECT quantity FROM batches 
+                WHERE batch_id = ? AND medication_id = ?
+            ''', (batch_id, product_id)).fetchone()
+            
+            if not batch:
+                flash('Error: Batch not found for the specified product', 'error')
+                return redirect(url_for('remove_item'))
+            
+            current_quantity = batch['quantity']
+            
+            if current_quantity < quantity_to_remove:
+                flash(f'Error: Only {current_quantity} items available in batch {batch_id}', 'error')
+                return redirect(url_for('remove_item'))
+            
+            # Update batch quantity
+            new_quantity = current_quantity - quantity_to_remove
+            
+            if new_quantity == 0:
+                # Remove batch if quantity becomes zero
+                conn.execute('DELETE FROM batches WHERE batch_id = ?', (batch_id,))
+            else:
+                # Update batch quantity
+                conn.execute('''
+                    UPDATE batches SET quantity = ? WHERE batch_id = ?
+                ''', (new_quantity, batch_id))
+            
+            # Record stock update
+            conn.execute('''
+                INSERT INTO stock_updates (medication_id, supplier_id, batch_id, username, 
+                                         update_type, quantity_change, old_quantity, new_quantity, reason)
+                VALUES (?, 1, ?, 'system', 'remove', ?, ?, ?, ?)
+            ''', (product_id, batch_id, quantity_to_remove, current_quantity, new_quantity, reason))
+            
+            conn.commit()
+            conn.close()
+            
+            flash(f'Successfully removed {quantity_to_remove} items from {product_name} (Batch {batch_id})', 'success')
+            return redirect(url_for('dashboard'))
+            
+        except Exception as e:
+            flash(f'Error removing item: {str(e)}', 'error')
+    
+    return render_template('remove_item.html')
+
+# Edit Safety Stock functionality
+@app.route('/edit_item', methods=['GET', 'POST'])
+def edit_item():
+    if request.method == 'POST':
+        try:
+            # Get form data
+            product_id = request.form['ProductID']
+            product_name = request.form['productName']
+            new_safety_stock = int(request.form['editSafetyStock'])
+            
+            conn = get_database_connection()
+            
+            # Check if medication exists
+            medication = conn.execute(
+                'SELECT * FROM medications WHERE medication_id = ?', (product_id,)
+            ).fetchone()
+            
+            if not medication:
+                flash('Error: Medication not found', 'error')
+                return redirect(url_for('edit_item'))
+            
+            # Get current safety stock level
+            current_safety_stock = conn.execute(
+                'SELECT safety_stock_level FROM medications WHERE medication_id = ?', (product_id,)
+            ).fetchone()[0]
+            
+            # Update safety stock level
+            conn.execute('''
+                UPDATE medications 
+                SET safety_stock_level = ?, medication_name = ?
+                WHERE medication_id = ?
+            ''', (new_safety_stock, product_name, product_id))
+            
+            # Record stock update for tracking changes
+            quantity_change = new_safety_stock - current_safety_stock
+            conn.execute('''
+                INSERT INTO stock_updates (medication_id, supplier_id, batch_id, username, 
+                                         update_type, quantity_change, old_quantity, new_quantity, reason)
+                VALUES (?, 1, NULL, 'system', 'set', ?, ?, ?, 'adjustment')
+            ''', (product_id, quantity_change, current_safety_stock, new_safety_stock))
+            
+            conn.commit()
+            conn.close()
+            
+            flash(f'Safety stock level for {product_name} updated to {new_safety_stock}', 'success')
+            return redirect(url_for('dashboard'))
+            
+        except Exception as e:
+            flash(f'Error updating safety stock: {str(e)}', 'error')
+    
+    return render_template('edit_item.html')
+
+# Helper function to get database connection (fixing the typo in your existing code)
+def get_db_connection():
+    """Get database connection"""
+    conn = sqlite3.connect('Medications.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+# Also update your existing dashboard function to use the correct connection function
+@app.route('/Pharmacy')
+def dashboard():
+    conn = get_db_connection()  # Fixed function name
+    
+    # Get total products (sum of all products)
+    total_products = conn.execute('SELECT count(medication_name) FROM medications').fetchone()[0] or 0
+
+    # Get total items (sum of all batches)
+    total_items = conn.execute('SELECT SUM(quantity) FROM batches').fetchone()[0] or 0
+    
+    # Get low stock count (products with quantity <= min_stock_level)
+    low_stock_count = conn.execute(''' 
+        SELECT COUNT(*) 
+        FROM medications m
+        WHERE (
+            SELECT COALESCE(SUM(b.quantity), 0) 
+            FROM batches b 
+            WHERE b.medication_id = m.medication_id
+        ) <= m.safety_stock_level
+    ''').fetchone()[0] or 0
+    
+    # Get products for inventory table
+    products = conn.execute('''
+        SELECT m.medication_id, m.medication_name, MIN(b.expiry_date) as earliest_expiry, 
+               SUM(b.quantity) as total_quantity, m.safety_stock_level, m.unit_price
+        FROM medications m
+        LEFT JOIN batches b ON m.medication_id = b.medication_id
+        GROUP BY m.medication_id
+        ORDER BY m.medication_id
+    ''').fetchall()
+    
+    # Get orders for order table
+    orders = conn.execute('''
+        SELECT order_id, full_name_and_surname, user_type, created_at, item_ordered
+        FROM customers 
+        ORDER BY created_at DESC
+    ''').fetchall()
+    
+    conn.close()
+    
+    return render_template('Pharmacy.html', 
+                         total_products=total_products,
+                         total_items=total_items,
+                         low_stock_count=low_stock_count,
+                         products=products,
+                         orders=orders)
