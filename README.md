@@ -137,48 +137,7 @@ The database includes 2 sample data entries for testing in each table:
 - **2 Customers**: Court Kadash and Tino Mukiwa along with their respective identity numbers
 
 # File Structure
-├── add_item.html              # Add new medications 
+<img width="447" height="781" alt="Screenshot (70)" src="https://github.com/user-attachments/assets/e6ccc873-6b7d-4506-b78d-7562cfae19c0" />
 
-├── add_prescriptions.html     # Add customer prescriptions 
-
-├── customerLogin.html         # Customer login page  
-
-├── Customers.html             # Customer registration page 
-
-├── edit_item.html             # Edit medications  
-
-├── Frontpage.html             # Main dashboard/ Home page 
-
-├── manage_suppliers.html      # Add new suppliers
-
-├── MedicalStaff.html          # Medical staff registration page  
-
-├── medicalStaffLogin.html     # Medical staff login page  
-
-├── Pharmacy.html              # Pharmacy personnel registration page 
-
-├── pharmacyLogin.html         # Pharmacy personnel login page  
-
-├── place_order1.html          # Page 1 for customer order placements  
-
-├── place_order2.html          # Page 2 for medical staff order placement  
-
-├── privacy_policy.html        # Privacy policy page  
-
-├── remove_item.html           # Remove medications from the system  
-
-├── terms_of_service.html      # Service terms page  
-
-├── view_suppliers.html        # View all current suppliers in database 
-
-├── Medications.sql            # Database schema and sample data  
-
-├── Medications.db             # SQLite database (created after running setup)  
-
-├── styles.css                 # CSS styles file  
-
-├── signup.html                # Signup page
-
-├── app.py                     # Backend file
 
 └── README.md                  # This file  
