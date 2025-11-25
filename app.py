@@ -508,7 +508,7 @@ def medicalstaff_login():
                 flash('Medical staff login successful!', 'success')
                 return redirect(url_for('medicalstaff_dashboard'))
             else:
-                flash('This account is for registered medical staff only,', 'warning')
+                flash('This account is for registered medical staff only.', 'warning')
         else:
             flash('Invalid credentials.', 'danger')
     return render_template('medicalStaffLogin.html')
