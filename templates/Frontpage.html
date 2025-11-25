@@ -30,7 +30,7 @@
 
         <div class="container-fluid">
 
-            <a class="navbar-brand fw-bold fs-4" href="/">
+            <a class="navbar-brand fw-bold fs-4" href="{{ url_for('home') }}">
 
                 <i class="bi bi-house-door-fill me-2 text-primary"></i> LogiTrack
 
@@ -54,25 +54,25 @@
 
                     <li class="nav-item">
 
-                        <a class="nav-link active fw-medium" href="/">Home</a>
+                        <a class="nav-link active fw-medium" href="{{ url_for('home') }}">Home</a>
 
                     </li>
 
                     <li class="nav-item">
 
-                        <a class="nav-link fw-medium" href="/pharmacylogin">Pharmacy Portal</a>
+                        <a class="nav-link fw-medium" href="{{ url_for('pharmacy_login') }}">Pharmacy Portal</a>
 
                     </li>
 
                     <li class="nav-item">
 
-                        <a class="nav-link fw-medium" href="/medicalstafflogin">Medical Staff Portal</a>
+                        <a class="nav-link fw-medium" href="{{ url_for('medicalstaff_login') }}">Medical Staff Portal</a>
 
                     </li>
 
                     <li class="nav-item">
 
-                        <a class="nav-link fw-medium" href="/customerlogin">Customer Portal</a>
+                        <a class="nav-link fw-medium" href="{{ url_for('customer_login') }}">Customer Portal</a>
 
                     </li>
 
@@ -134,7 +134,7 @@
 
                     </ul>
 
-                    <a href="/pharmacylogin" class="btn btn-portal mt-3 d-block">
+                    <a href= "{{ url_for('pharmacy_login') }}" class="btn btn-portal mt-3 d-block">
 
                         <i class="bi bi-arrow-right me-2"></i> Enter Portal
 
@@ -170,7 +170,7 @@
  
                     </ul>
 
-                    <a href="/medicalstafflogin" class="btn btn-portal mt-3 d-block">
+                    <a href= "{{ url_for('medicalstaff_login') }}" class="btn btn-portal mt-3 d-block">
 
                         <i class="bi bi-arrow-right me-2"></i> Enter Portal
 
@@ -198,7 +198,7 @@
 
                     <ul class="feature-list">
 
-                        <li><i class="bi bi-basket3-fill"></i> Order History </li>
+                        <li><i class="bi bi-basket3-fill"></i> Medication Ordering </li>
 
                         <li><i class="bi bi-capsule-pill"></i> Prescription Upload</li>
 
@@ -206,7 +206,7 @@
 
                     </ul>
 
-                    <a href="/customerlogin" class="btn btn-portal mt-3 d-block">
+                    <a href= "{{ url_for('customer_login') }}" class="btn btn-portal mt-3 d-block">
 
                         <i class="bi bi-arrow-right me-2"></i> Enter Portal
 

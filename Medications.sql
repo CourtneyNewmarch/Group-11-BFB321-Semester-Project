@@ -84,7 +84,7 @@ CREATE TABLE customers (
     full_name_and_surname TEXT NOT NULL,
     password TEXT,
     user_type TEXT NOT NULL CHECK (user_type IN ('external_user', 'internal_user')),
-    customer_id TEXT, 
+    customer_id TEXT,
     item_ordered TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     status TEXT CHECK (status IN ('Pending', 'Delivered')) DEFAULT 'Pending',

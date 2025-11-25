@@ -16,7 +16,7 @@
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm">
         <div class="container-fluid">
             <!-- Brand -->
-            <a class="navbar-brand fw-bold fs-4" href="/">
+            <a class="navbar-brand fw-bold fs-4" href= "{{ url_for('home') }}">
                 <i class="bi bi-house-door-fill me-2 text-danger"></i> LogiTrack
             </a>
             <!-- Toggler for mobile -->
@@ -27,16 +27,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link fw-medium" href="/">Home</a>
+                        <a class="nav-link fw-medium" href="{{ url_for('home') }}" >Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active fw-medium" href="/Pharmacy">Pharmacy Portal</a>
+                        <a class="nav-link active fw-medium" href="{{ url_for('pharmacy_dashboard') }}">Pharmacy Portal</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fw-medium" href="/medicalstafflogin">Medical Staff Portal</a>
+                        <a class="nav-link fw-medium" href="{{ url_for('medicalstaff_login') }}" >Medical Staff Portal</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fw-medium" href="/customerlogin">Customer Portal</a>
+                        <a class="nav-link fw-medium" href="{{ url_for('customer_login') }}" >Customer Portal</a>
                     </li>
                 </ul>
             </div>
@@ -90,43 +90,6 @@
         <!-- Inventory Management Section -->
         <div class="content-section pharmacy-content">
             <h2 class="pharmacy-h2"><i class="bi bi-boxes"></i>Inventory Management</h2>
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body">
-                        <form action="/search" method ="get">
-                            <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="searchInput" class="form-label">Search Products</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="bi bi-search"></i>
-                                    </span>
-                                    <input type="text" class="form-control" id="searchInput" placeholder="Search by product name, ID or expiry date...">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="stockFilter" class="form-label">Stock Status</label>
-                                <select class="form-select" id="stockFilter">
-                                    <option value="">All Items</option>
-                                    <option value="in-stock">In Stock</option>
-                                    <option value="low-stock">Low Stock</option>
-                                    <option value="out-of-stock">No Stock</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label">&nbsp;</label>
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-outline-danger">
-                                        <i class="bi bi-funnel me-1"></i>Filter
-                                    </button>
-                                </div>
-                            </div> 
-                        </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="table-responsive mt-4">
                 <table class="table table-striped pharmacy-table">
                     <thead>
@@ -174,40 +137,10 @@
                 </div>
             </div>
         </div>
-        </div>
 
         <!-- Order Section -->
-        <div class="content-section pharmacy-content">
-            <h2 class="pharmacy-h2"><i class="bi bi-basket3-fill"></i>Order Management</h2>
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <form action="/search" method="get">
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <label for="orderFilter" class="form-label">Order Status</label>
-                                        <select class="form-select" id="orderFilter">
-                                            <option value="">All Orders</option>
-                                            <option value="Pending">Pending Orders</option>
-                                            <option value="Delivered">Delivered Orders</option>  
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label">&nbsp;</label>
-                                        <div class="d-grid">
-                                            <button type="submit" class="btn btn-outline-danger">
-                                                <i class="bi bi-funnel me-1"></i>Filter
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </form> 
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        <div class ="content-section pharmacy-content">
+            <h2 class="pharmacy-h2"><i class="bi bi-card-checklist"></i>Order Management</h2>
             <div class="table-responsive mt-4">
                 <table class="table table-striped pharmacy-table">
                     <thead>
@@ -245,7 +178,6 @@
                 </table>
             </div>
         </div>
-        </div>
 
         <!-- Supplier Management Section -->
         <div class="content-section pharmacy-content">
@@ -256,8 +188,8 @@
                 </div>
                 <div class="col-md-3">
                     <form class="d-flex justify-content-md-end" action="/view_suppliers" method="get">
-                        <button class="btn btn-outline-dark" type="submit" aria-label="Search suppliers">
-                            <i class="bi bi-search">Search Suppliers</i>
+                        <button class="btn btn-outline-dark" type="submit" aria-label="View suppliers">
+                            <i class="bi bi-search">View Suppliers</i>
                         </button>
                     </form>
                 </div>   

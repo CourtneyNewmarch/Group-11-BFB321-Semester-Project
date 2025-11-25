@@ -20,6 +20,22 @@
     </nav>
 
     <div class="container my-5">
+        <!-- Flash messages for errors/success -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'info' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
@@ -38,29 +54,35 @@
                             </div>
                             <div class="mb-3">
                                 <label for="batchID" class="form-label">Batch ID</label>
-                                <input type="number" class="form-control" id="batchID" name="batchID" required>
+                                <input type="text" class="form-control" id="batchID" name="batchID" required>
                             </div>
                             <div class="mb-3">
                                 <label for="quantity" class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" required>
+                                <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
                             </div>
                             <div class="mb-3">
-                                <label for="reason" class="form-label">Reason for Stock Removel</label>
-                                <select class="form-select" id="stockFilter">
-                                    <option value="Expired">Expired</option>
-                                    <option value="Sale">Sale</option>
-                                    <option value="Returned">Return</option>
+                                <label for="reason" class="form-label">Reason for Stock Removal</label>
+                                <select class="form-select" id="reason" name="reason">
+                                    <option value="expired">Expired</option>
+                                    <option value="sale">Sale</option>
+                                    <option value="returned">Returned</option>
+                                    <option value="other">Other</option>
                                 </select>
                             </div>
                         </div>
                         <div class="card-footer text-center">
-                            <button type="submit" class="btn btn-primary">Remove Item</button>
-                            <a href="/pharmacy" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary" title="Remove the selected item from inventory">
+                                Remove Item
+                            </button>
+                            <a href="/pharmacy" class="btn btn-secondary" title="Cancel and return to pharmacy dashboard">Cancel</a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

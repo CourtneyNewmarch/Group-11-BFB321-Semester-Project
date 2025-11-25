@@ -12,7 +12,7 @@
     <header>
          <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold fs-4" href="/">
+            <a class="navbar-brand fw-bold fs-4" href="{{ url_for('home') }}" >
                 <i class="bi bi-house-door-fill me-2 text-primary"></i> LogiTrack
             </a>
             
@@ -23,16 +23,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link fw-medium" href="/">Home</a>
+                        <a class="nav-link fw-medium" href= "{{ url_for('home') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active fw-medium" href="/pharmacylogin">Pharmacy Portal</a>
+                        <a class="nav-link active fw-medium" href= "{{ url_for('pharmacy_login') }}">Pharmacy Portal</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fw-medium" href="/medicalstafflogin">Medical Staff Portal</a>
+                        <a class="nav-link fw-medium" href="{{ url_for('medicalstaff_login') }}" >Medical Staff Portal</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fw-medium" href="/customerlogin">Customer Portal</a>
+                        <a class="nav-link fw-medium" href= "{{ url_for('customer_login') }}">Customer Portal</a>
                     </li>
                 </ul>
             </div>
@@ -51,14 +51,14 @@
                             <p class="text-muted">Sign in to your account</p>
                         </header><br>
 
-                        <form action="/pharmacy" role="form" aria-labelledby="login-heading">
+                        <form method="POST" action="{{ url_for('pharmacy_login') }}" role="form" aria-labelledby="login-heading">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <div class="input-group">
                                     <span class="input-group-text" aria-hidden="true">
-                                        <i class="bi bi-envelope"></i>
+                                        <i class="bi bi-person"></i>
                                     </span>
-                                    <input type="email" class="form-control" id="username" name="username" placeholder="Enter your email" required autocomplete="email">
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required autocomplete="username">
                                 </div>
                             </div>
 

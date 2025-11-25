@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import sqlite3
+import traceback
+
 
 app = Flask(__name__)
 app.secret_key = '23456'
+
+
 
 # Linking the database to the backend code
 def get_database_connection():
@@ -18,7 +22,7 @@ def home():
 
 
 
-# Pharmacy Portal's Dashboard - Consolidated route for all pharmacy data
+# (API endpoint) portal's Dashboard - Consolidated route for all pharmacy data
 @app.route('/pharmacy', methods=['GET', 'POST'])
 def pharmacy_dashboard():
     conn = get_database_connection()
@@ -103,8 +107,7 @@ def pharmacy_dashboard():
 
 
 
-
-# Medical Staff Portal's Dashboard - inventory and orders table, and delivery stats
+# (API endpoint) Medical Staff Portal's Dashboard - inventory and orders table, and delivery stats
 @app.route('/medicalstaff')
 def medicalstaff_dashboard():
     conn = get_database_connection()
@@ -195,7 +198,7 @@ def add_item():
                 ''', (product_id, product_name))
                 flash(f'New medication {product_name} created with ID {product_id}', 'info')
             
-            # Add batch to the bathches table
+            # Add batch to the batches table
             conn.execute('''
                 INSERT INTO batches (batch_id, quantity, expiry_date, medication_id)
                 VALUES (?, ?, ?, ?)
@@ -215,8 +218,8 @@ def add_item():
             conn.commit()
             conn.close()
             
-            flash(f'Item {product_name} and Batch {batch_id}) added successfully!', 'success')
-            return redirect(url_for('pharmacy'))
+            flash(f'Item {product_name} and Batch {batch_id} added successfully!', 'success')
+            return redirect(url_for('pharmacy_dashboard'))
             
         except sqlite3.IntegrityError:
             flash('Error: Batch ID already exists or invalid medication ID', 'error')
@@ -226,73 +229,86 @@ def add_item():
     return render_template('add_item.html')
 
 
-
-# Remove Item functionality in Pharmacy Portal
+# Remove Item functionality 
 @app.route('/remove_item', methods=['GET', 'POST'])
 def remove_item():
     if request.method == 'POST':
+        conn = None
         try:
-            # Get form data
-            product_id = request.form['productID']
-            product_name = request.form['productName']
-            batch_id = request.form['batchID']
+            product_id = request.form['productID'].strip()
+            batch_id = request.form['batchID'].strip()
             quantity_to_remove = int(request.form['quantity'])
             reason = request.form.get('reason', 'other')
             
             conn = get_database_connection()
             
-            # Check if batch exists and has sufficient quantity
+            # Check batch and update
             batch = conn.execute('''
-                SELECT quantity FROM batches 
-                WHERE batch_id = ? AND medication_id = ?
-            ''', (batch_id, product_id)).fetchone()[0]
+                SELECT quantity FROM batches WHERE batch_id = ? AND medication_id = ?
+            ''', (batch_id, product_id)).fetchone()
             
             if not batch:
-                flash('Error: Batch not found for the specified product', 'error')
+                flash('Batch not found for this product ID', 'error')
                 return redirect(url_for('remove_item'))
             
             current_quantity = batch['quantity']
+            print(f"Current quantity: {current_quantity}")
             
             if current_quantity < quantity_to_remove:
-                flash(f'Error: Only {current_quantity} items available in batch {batch_id}', 'error')
+                flash(f'Only {current_quantity} items available in this batch', 'error')
                 return redirect(url_for('remove_item'))
             
-            # Update batch quantity
             new_quantity = current_quantity - quantity_to_remove
             
             if new_quantity == 0:
-                # Remove batch if quantity becomes zero
-                conn.execute('DELETE FROM batches WHERE batch_id = ?', (batch_id,))
+                conn.execute('DELETE FROM batches WHERE batch_id = ? AND medication_id = ?', (batch_id, product_id))
+                flash(f'Batch {batch_id} completely removed', 'info')
             else:
-                # Update batch quantity
-                conn.execute('''
-                    UPDATE batches SET quantity = ? WHERE batch_id = ?
-                ''', (new_quantity, batch_id))
+                conn.execute('UPDATE batches SET quantity = ? WHERE batch_id = ? AND medication_id = ?', 
+                           (new_quantity, batch_id, product_id))
+                flash(f'Batch {batch_id} updated to {new_quantity} items', 'info')
+            
+            # Log the removal in stock_updates table
+            try:
+                # Get supplier_id for the medication
+                supplier = conn.execute(
+                    'SELECT supplier_id FROM medications WHERE medication_id = ?', (product_id,)
+                ).fetchone()
+                
+                if supplier:
+                    # Get current total quantity for this medication
+                    current_total = conn.execute(
+                        'SELECT SUM(quantity) as total FROM batches WHERE medication_id = ?', (product_id,)
+                    ).fetchone()
+                    
+                    old_total = (current_total['total'] or 0) + quantity_to_remove
+                    new_total = old_total - quantity_to_remove
+                    
+                    conn.execute('''
+                        INSERT INTO stock_updates (medication_id, supplier_id, batch_id, username, 
+                                                update_type, quantity_change, old_quantity, new_quantity, reason)
+                        VALUES (?, ?, ?, 'system', 'remove', ?, ?, ?, ?)
+                    ''', (product_id, supplier['supplier_id'], batch_id, quantity_to_remove, 
+                          old_total, new_total, reason))
+            except Exception as e:
+                print(f"Could not log stock update: {e}")
             
             conn.commit()
-            conn.close()
-
-            conn = get_database_connection()
-            # Record stock update
-            conn.execute('''
-                INSERT INTO stock_updates (medication_id, supplier_id, batch_id, username, 
-                                         update_type, quantity_change, old_quantity, new_quantity, reason)
-                VALUES (?, 1, ?, 'system', 'remove', ?, ?, ?, ?)
-            ''', (product_id, batch_id, quantity_to_remove, current_quantity, new_quantity, reason))
+            flash('Items removed successfully', 'success')
+            return redirect(url_for('pharmacy_dashboard'))
             
-            conn.commit()
-            conn.close()
-            
-            flash(f'Successfully removed {quantity_to_remove} items from {product_name} (Batch {batch_id})', 'success')
-            return redirect(url_for('dashboard'))
-            
+        except ValueError as e:
+            flash(f'Invalid input: Please check that quantity is a valid number.', 'error')
         except Exception as e:
-            flash(f'Error removing item: {str(e)}', 'error')
+            flash(f'Error removing items: {str(e)}', 'error')
+            print(f"Error details: {traceback.format_exc()}")
+        finally:
+            if conn:
+                conn.close()
     
     return render_template('remove_item.html')
 
-
-
+        
 # Edit Safety Stock functionality in Pharmacy Portal
 @app.route('/edit_item', methods=['GET', 'POST'])
 def edit_item():
@@ -348,7 +364,6 @@ def edit_item():
             flash(f'Error updating safety stock: {str(e)}', 'error')
     
     return render_template('edit_item.html')
-
 
 
 # Add suppliers in Pharmacy Portal
@@ -468,27 +483,203 @@ def add_privacyPolicy():
 
 
 
-# Pharmacy Staff Login
-@app.route('/pharmacylogin')
-def pharmacy_login():
-    return render_template('pharmacyLogin.html')
-
-# Medical Staff Login
-@app.route('/medicalstafflogin')
-def medicalStaff_login():
+#Medical Staff Portal Login
+@app.route('/medicalstafflogin',  methods=['GET', 'POST'])
+def medicalstaff_login():
+    if request.method == 'POST':
+        customer_id = request.form.get('customer_id', '').strip()  # Added .strip() for safety
+        password = request.form['password']
+        
+        #print(f"Debug: Attempting login with customer_id='{customer_id}', password='{password}'")  # TEMP DEBUG
+        
+        conn = get_database_connection()
+        user_query = """
+            SELECT *
+            FROM customers
+            WHERE customer_id = ?
+        """
+        user = conn.execute(user_query, (customer_id,)).fetchone()
+        conn.close()
+        
+        #print(f"Debug: User found? {user is not None}, Type: {user['user_type'] if user else None}")  # TEMP DEBUG
+        
+        if user and user['password'] == password:
+            if user['user_type'] == 'internal_user':
+                flash('Medical staff login successful!', 'success')
+                return redirect(url_for('medicalstaff_dashboard'))
+            else:
+                flash('This account is for registered medical staff only,', 'warning')
+        else:
+            flash('Invalid credentials.', 'danger')
     return render_template('medicalStaffLogin.html')
 
-# Customer Login
-@app.route('/customerlogin')
+
+#Customer Portal login
+@app.route('/customerlogin', methods=['GET', 'POST'])
 def customer_login():
+    if request.method == 'POST':
+        customer_id = request.form.get('customer_id', '').strip()  # Added .strip() for safety
+        password = request.form['password']
+        
+        #print(f"Debug: Attempting login with customer_id='{customer_id}', password='{password}'")  # TEMP DEBUG
+        
+        conn = get_database_connection()
+        user_query = """
+            SELECT *
+            FROM customers
+            WHERE customer_id = ?
+        """
+        user = conn.execute(user_query, (customer_id,)).fetchone()
+        conn.close()
+        
+        #print(f"Debug: User found? {user is not None}, Type: {user['user_type'] if user else None}")  # TEMP DEBUG
+        
+        if user and user['password'] == password:
+            if user['user_type'] == 'external_user':
+                flash('Customer login successful!', 'success')
+                return redirect(url_for('customer_dashboard'))
+            else:
+                flash('This account is for registered customers only.', 'warning')
+        else:
+            flash('Invalid credentials.', 'danger')
+    
     return render_template('customerLogin.html')
 
+
+#Pharmacy staff Portal Login
+@app.route('/pharmacylogin', methods=['GET', 'POST'])
+def pharmacy_login():
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()  # Added .strip() for safety
+        password = request.form['password']
+        
+        conn = get_database_connection()
+        user_query = """
+            SELECT *
+            FROM pharmacy_personnel
+            WHERE username = ?
+        """
+        user = conn.execute(user_query, (username,)).fetchone()
+        conn.close()
+        
+        if user and user['password'] == password:
+            return redirect(url_for('pharmacy_dashboard'))
+        else:
+            flash('Invalid credentials.', 'danger')
+    
+    return render_template('pharmacyLogin.html')
+
+
 # Signup Page
-@app.route('/signup')
-def signup_page():
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        try:
+            role = request.form.get('role')
+            full_name = request.form.get('full_name', '').strip()
+            password = request.form.get('password')
+            customer_id = request.form.get('customer_id', '').strip()
+            username = request.form.get('username', '').strip()
+
+            if not full_name or not password:
+                flash('Full name and password are required.', 'error')
+                return redirect(url_for('signup'))
+
+            conn = get_database_connection()
+
+            if role == 'customer':
+                if not customer_id:
+                    flash('Customer ID is required for customers.', 'error')
+                    conn.close()
+                    return redirect(url_for('signup'))
+
+                # Check if customer already exists
+                existing = conn.execute(
+                    'SELECT customer_id FROM customers WHERE customer_id = ? AND user_type = "external_user"',
+                    (customer_id,)
+                ).fetchone()
+                if existing:
+                    flash('Customer ID already exists. Please login.', 'warning')
+                    conn.close()
+                    return redirect(url_for('customer_login'))
+
+                # Insert new customer
+                conn.execute('''
+                    INSERT INTO customers (customer_id, full_name_and_surname, user_type, password)
+                    VALUES (?, ?, 'external_user', ?)
+                ''', (customer_id, full_name, password))
+                flash('Customer account created successfully! You can now log in.', 'success')
+                conn.commit()
+                conn.close()
+                return redirect(url_for('customer_login'))
+
+            elif role == 'medical':
+                if not customer_id:
+                    flash('Medical Staff ID is required.', 'error')
+                    conn.close()
+                    return redirect(url_for('signup'))
+
+                # Check if medical staff already exists
+                existing = conn.execute(
+                    'SELECT customer_id FROM customers WHERE customer_id = ? AND user_type = "internal_user"',
+                    (customer_id,)
+                ).fetchone()
+                if existing:
+                    flash('Medical Staff ID already exists. Please login.', 'warning')
+                    conn.close()
+                    return redirect(url_for('medicalstaff_login'))
+
+                # Insert new medical staff
+                conn.execute('''
+                    INSERT INTO customers (customer_id, full_name_and_surname, user_type, password)
+                    VALUES (?, ?, 'internal_user', ?)
+                ''', (customer_id, full_name, password))
+                flash('Medical Staff account created successfully! You can now log in.', 'success')
+                conn.commit()
+                conn.close()
+                return redirect(url_for('medicalstaff_login'))
+
+            elif role == 'pharmacy':
+                if not username:
+                    flash('Username is required for pharmacy personnel.', 'error')
+                    conn.close()
+                    return redirect(url_for('signup'))
+
+                # Check if username already exists
+                existing = conn.execute(
+                    'SELECT username FROM pharmacy_personnel WHERE username = ?',
+                    (username,)
+                ).fetchone()
+                if existing:
+                    flash('Username already exists. Please login.', 'warning')
+                    conn.close()
+                    return redirect(url_for('pharmacy_login'))
+
+                # Insert new pharmacy personnel
+                conn.execute('''
+                    INSERT INTO pharmacy_personnel (username, full_name_and_surname, password)
+                    VALUES (?, ?, ?)
+                ''', (username, full_name, password))
+                flash('Pharmacy Personnel account created successfully! You can now log in.', 'success')
+                conn.commit()
+                conn.close()
+                return redirect(url_for('pharmacy_login'))
+
+            else:
+                flash('Invalid role selected.', 'danger')
+                conn.close()
+                return redirect(url_for('signup'))
+
+        except sqlite3.IntegrityError as e:
+            flash('Database error: User may already exist or invalid data.', 'error')
+        except Exception as e:
+            flash(f'Error creating account: {str(e)}', 'error')
+            if 'conn' in locals() and conn:
+                conn.close()
+
     return render_template('signup.html')
 
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False) 
