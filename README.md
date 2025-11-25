@@ -13,7 +13,10 @@
 **Zhaneley Perry**:Updated all the login pages and linked it with flask.
                    Added a signup page for new users and linked it to the db via the roles (pharmacy staff, customers-internal (medical staff), customers-external (customers)).
                    Added backend code to link all the changes related to the login and signup pages on an app.py file.
-                   Did section 6,7 and 8 in the report
+                   Did section 6,7 and 8 in the report.
+**Rorisang Dithato**:
+**Courtney Newmarch**:
+**Tinotenda Mukiwa**:
 # Medical Inventory Management System
 A web-based pharmaceutical inventory management systems that functions to reduce medicine stockouts in South African healthcare facilities. The system is built with HTML, Bootstrap, CSS and SQLite.
 
