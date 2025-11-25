@@ -150,7 +150,7 @@ def medicalstaff_dashboard():
 
 
 
-# Customer Portal's Dashboard - Orders Table
+# (API endpoint) Customer Portal's Dashboard - Orders Table
 @app.route('/customers')
 def customer_dashboard():
     conn = get_database_connection()
@@ -171,7 +171,7 @@ def customer_dashboard():
 
 
 
-# Add Item functionality in Pharmacy Portal
+# (API endpoint) Add Item functionality in Pharmacy Portal
 @app.route('/add_item', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
@@ -229,7 +229,7 @@ def add_item():
     return render_template('add_item.html')
 
 
-# Remove Item functionality 
+# (API endpoint) Remove Item functionality 
 @app.route('/remove_item', methods=['GET', 'POST'])
 def remove_item():
     if request.method == 'POST':
@@ -309,7 +309,7 @@ def remove_item():
     return render_template('remove_item.html')
 
         
-# Edit Safety Stock functionality in Pharmacy Portal
+# (API endpoint) Edit Safety Stock functionality in Pharmacy Portal
 @app.route('/edit_item', methods=['GET', 'POST'])
 def edit_item():
     if request.method == 'POST':
@@ -366,7 +366,7 @@ def edit_item():
     return render_template('edit_item.html')
 
 
-# Add suppliers in Pharmacy Portal
+# (API endpoint) Add suppliers in Pharmacy Portal
 @app.route('/manage_suppliers', methods=['GET', 'POST'])
 def manage_suppliers():
     if request.method == 'POST':
@@ -396,7 +396,7 @@ def manage_suppliers():
 
 
 
-# Viewing suppliers in Pharmacy Portal 
+# (API enpoint) Viewing suppliers in Pharmacy Portal 
 @app.route('/view_suppliers')
 def view_suppliers():
     conn = get_database_connection()
@@ -406,7 +406,7 @@ def view_suppliers():
 
 
 
-# add external customer orders
+# (API endpoint) add external customer orders
 @app.route('/place_order1', methods=['GET', 'POST'])
 def place_customer_order():
 
@@ -435,7 +435,7 @@ def place_customer_order():
 
 
 
-# add internal customer (medical staff) orders
+# (API endpoint) add internal customer (medical staff) orders
 @app.route('/place_order2', methods=['GET', 'POST'])
 def place_medicalstaff_order():
 
@@ -483,7 +483,7 @@ def add_privacyPolicy():
 
 
 
-#Medical Staff Portal Login
+# (API endpoint) Medical Staff Portal Login
 @app.route('/medicalstafflogin',  methods=['GET', 'POST'])
 def medicalstaff_login():
     if request.method == 'POST':
@@ -514,7 +514,7 @@ def medicalstaff_login():
     return render_template('medicalStaffLogin.html')
 
 
-#Customer Portal login
+# (API endpoint) Customer Portal login
 @app.route('/customerlogin', methods=['GET', 'POST'])
 def customer_login():
     if request.method == 'POST':
@@ -546,7 +546,7 @@ def customer_login():
     return render_template('customerLogin.html')
 
 
-#Pharmacy staff Portal Login
+# (API endpoint) Pharmacy staff Portal Login
 @app.route('/pharmacylogin', methods=['GET', 'POST'])
 def pharmacy_login():
     if request.method == 'POST':
@@ -570,7 +570,7 @@ def pharmacy_login():
     return render_template('pharmacyLogin.html')
 
 
-# Signup Page
+# (API endpoint) Signup Page
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
