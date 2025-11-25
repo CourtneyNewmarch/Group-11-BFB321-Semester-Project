@@ -177,6 +177,10 @@ The database includes 2 sample data entries for testing in each table:
 
 ├── styles.css                 # CSS styles file  
 
+├── signup.html                # Signup page
+
+├── app.py                     # Backend file
+
 └── README.md                  # This file  
 
 
