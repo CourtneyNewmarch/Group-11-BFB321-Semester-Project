@@ -12,12 +12,16 @@
 A web-based pharmaceutical inventory management systems that functions to reduce medicine stockouts in South African healthcare facilities. The system is built with HTML, Bootstrap, CSS and SQLite.
 
 # Features
-- **Dashboard**: A summary view of medication inventory statistics and user activity  
-- **Order Tracking**: A detailed overview of the quantities and delivery dates of orders in the system  
-- **Product Management**: Add, view and remove medications in the system  
-- **Stock Tracking**: Update stock levels with detailed analytics  
-- **Customer Management**: Control customer use and track order histories for predictive analytics  
-- **Supplier Management**: Monitor supplier performance and streamline procurement
+
+- **Dashboard**: Real-time summary view of medication inventory statistics, low-stock alerts, and user activity
+- **Order Tracking**: Comprehensive overview of order quantities, delivery dates, and status updates (Pending/Delivered)
+- **Product Management**: Add, view, edit, and remove medications with batch-level tracking and expiry date monitoring
+- **Stock Tracking**: Update stock levels with detailed analytics, safety stock alerts, and inventory valuation
+- **Customer Management**: Manage customer profiles, track order histories, and support both internal (medical staff) and external users
+- **Supplier Management**: Monitor supplier performance, maintain contact information, and streamline procurement processes
+- **Multi-Portal Access**: Separate optimized interfaces for Pharmacy Personnel, Medical Staff, and Customers
+- **Prescription Management**: Secure digital prescription upload and management system
+
 
 # Database Setup
 1. Open command prompt/terminal in the project directory
@@ -36,46 +40,23 @@ erDiagram
         TEXT email
         TEXT address
     }
-    
+
     medications {
         TEXT medication_id PK
-        TEXT medication_name UK
+        TEXT medication_name
         TEXT medication_category
         INTEGER safety_stock_level
         REAL unit_price
         INTEGER supplier_id FK
     }
-    
+
     batches {
         INTEGER batch_id PK
         INTEGER quantity
         DATE expiry_date
         TEXT medication_id FK
     }
-    
-    stock_updates {
-        INTEGER update_id PK
-        TEXT medication_id FK
-        INTEGER supplier_id FK
-        INTEGER batch_id FK
-        TEXT update_type
-        INTEGER quantity_change
-        INTEGER old_quantity
-        INTEGER new_quantity
-        TEXT reason
-        DATETIME created_at
-    }
-    
-    customers {
-        TEXT customer_id PK
-        TEXT full_name_and_surname
-        TEXT password
-        TEXT user_type
-        INTEGER order_id
-        TEXT item_ordered
-        DATETIME created_at
-    }
-    
+
     pharmacy_personnel {
         TEXT username PK
         TEXT full_name_and_surname
@@ -83,13 +64,40 @@ erDiagram
         DATETIME created_at
     }
 
-    suppliers ||--o{ medications : "supplies"
-    medications ||--o{ batches : "contains"
-    medications ||--o{ stock_updates : "tracks"
-    suppliers ||--o{ stock_updates : "records"
-    batches ||--o{ stock_updates : "references"
-    customers }o--o{ medications : "orders"
-    pharmacy_personnel }o--o{ stock_updates : "manages"
+    stock_updates {
+        INTEGER update_id PK
+        TEXT medication_id FK
+        INTEGER supplier_id FK
+        INTEGER batch_id FK
+        TEXT username FK
+        TEXT update_type
+        INTEGER quantity_change
+        INTEGER old_quantity
+        INTEGER new_quantity
+        TEXT reason
+        DATETIME created_at
+    }
+
+    customers {
+        INTEGER order_id PK
+        TEXT full_name_and_surname
+        TEXT password
+        TEXT user_type
+        TEXT customer_id
+        TEXT item_ordered
+        DATETIME created_at
+        TEXT status
+        TEXT address
+    }
+
+    suppliers ||--o{ medications : supplies
+    medications ||--o{ batches : contains
+    medications ||--o{ stock_updates : tracks
+    suppliers ||--o{ stock_updates : involved_in
+    batches ||--o{ stock_updates : affects
+    pharmacy_personnel ||--o{ stock_updates : performs
+    medications }o--o{ customers : "ordered_in"
+    pharmacy_personnel ||--o{ customers : processes
 
     %% Color Styling
     classDef suppliers fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -106,7 +114,8 @@ erDiagram
     class customers customers
     class pharmacy_personnel pharmacy_personnel
 ```
-This Database includes the following tables:    
+
+# This Database includes the following tables:    
 ## Tables
 1. __Suppliers__: Certified medication suppliers/vendors
 2. **Customers**: Registered customers/medical personell and their relevant information
@@ -171,18 +180,58 @@ The database includes 2 sample data entries for testing in each table:
 └── README.md                  # This file  
 
 
-# Usage
-1. Download all the provided files from github and save them in one folder
-2. Initialize the database using the SQLite command line method above
-3. Open LogiTrack.html in your web browser (by clicking on the page Frontpage.html)
-4. Navigate through the different pages to manage your medication inventory, user data and order creation. The use cases are valid for pharmacy personnel, medication staff and customers.
+## Installation
+
+1. **Download & Setup**
+   - Download all project files from GitHub and save them in a single folder
+   - Ensure you have Python installed on your system
+
+2. **Database Initialization**
+   - Open terminal/command prompt in the project folder
+   - Run: `sqlite3 Medications.db < Medications.sql` to create and populate the database
+
+3. **Launch Application**
+   - In the same terminal, run: `python app.py`
+   - Wait for the confirmation message: `* Running on http://127.0.0.1:5000`
+
+## Usage
+
+4. **Access System**
+   - Open your web browser and navigate to: `http://localhost:5000`
+   - The LogiTrack homepage will load automatically
+
+5. **Navigate Portals**
+   - Use the navigation menu to access different portals:
+     - **Pharmacy Portal**: For inventory management and supplier tracking
+     - **Medical Staff Portal**: For stock checking and internal orders
+     - **Customer Portal**: For placing orders and prescription upload
+
+6. **Create Accounts**
+   - Click "Sign Up" to create user accounts for testing different roles
+   - Select appropriate role (Pharmacy, Medical Staff, or Customer) during registration
+
+# API Endpoints
+
+The system includes RESTful endpoints for:
+
+- Inventory management (add, remove, update items)
+- Order processing and status updates
+- Supplier management
+- User authentication and role management
 
 # Technologies Used
-- HTML5: Structure and forms
-- Bootstrap 5.3.8: UI framework and styling
-- Bootstrap Icons: Icon set
-- CSS
-- SQLite: Database for data persistence
+
+### Frontend
+- **HTML5** - Page structure and semantic markup
+- **Bootstrap 5.3** - Responsive UI framework and components
+- **CSS3** - Custom styling and layout
+- **Bootstrap Icons** - UI icons and visual elements
+- **Jinja2 Templating** - Dynamic HTML rendering
+
+### Backend
+- **Python** - Server-side programming language
+- **Flask** - Web framework for routing and application logic
+- **SQLite** - Database for data persistence and management
 
 # Browser Compatibility
 The application works with all modern browsers that support HTML5 and CSS3, including:
@@ -192,7 +241,7 @@ The application works with all modern browsers that support HTML5 and CSS3, incl
 - Safari 14+
 - Edge 90+  
 
-Note: This is a static HTML application. For production use, you would need to add backend functionality for database connectivity and form processing.
+Note: This is a production-ready full-stack application with complete backend functionality. For deployment in healthcare environments, consider using a production WSGI server like Gunicorn and migrating to PostgreSQL for enhanced scalability.
 
    
    
