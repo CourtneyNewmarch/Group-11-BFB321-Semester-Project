@@ -183,6 +183,39 @@ The database includes 2 sample data entries for testing in each table:
 
 └── README.md                  # This file  
 
+# Team Contributions
+
+## 🧠 Project Team & Responsibilities
+
+Our team collaborated effectively to deliver the complete LogiTrack Medical Inventory System, with each member bringing specialized expertise to different components of the project.
+
+### **Zhaneley Perry** - Authentication & Security Lead
+- **Architected and implemented** the comprehensive user authentication system across all portals
+- **Engineered** the dynamic signup page with role-based registration (Pharmacy Staff, Medical Staff, Customers)
+- **Integrated** secure login functionality with database connectivity through Flask backend
+- **Authored** critical project documentation including Risk Analysis, Sustainability Planning, and Team Reflections
+
+### **Rorisang Dithato** - Order Management Architect  
+- **Designed and developed** the complete customer order database schema and management system
+- **Implemented** robust backend order processing pipelines for both internal and external users
+- **Pioneered** the order placement functionality with seamless frontend-backend integration
+- **Crafted** comprehensive project documentation including Final Concept & Architecture (compiled half of the readme file)
+
+### **Courtney Newmarch** - System Integration & Dashboard Specialist
+- **Orchestrated** the complete dashboard backend architecture and data visualization system
+- **Engineered** real-time inventory analytics with dynamic KPI calculations and low-stock alerts
+- **Developed** the supplier management ecosystem with full CRUD operations
+- **Led** final system integration and quality assurance across all modules
+- **Authored** Technical Architecture documentation and Executive Summary
+
+### **Tinotenda Mukiwa** - Inventory Operations Engineer
+- **Implemented** core inventory management functionalities including add, remove, and edit operations
+- **Developed** sophisticated safety stock level management with automated alert systems
+- **Built** customer portal backend logic with inventory management capabilities
+- **Contributed** to comprehensive project documentation including User Journey/ Workflows and the Implementation Guide (compiled the other half of the readme file)
+
+## 🔗 Integrated Delivery
+While specializing in different domains, our team maintained continuous collaboration to ensure seamless integration between authentication, inventory management, order processing, and dashboard systems, resulting in a cohesive and powerful medical inventory solution.
 
 ## Installation
 
